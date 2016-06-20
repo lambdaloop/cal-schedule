@@ -88,7 +88,7 @@ var ClassList = React.createClass({
     
     render: function() {
         var items = this.props.items.map(function(item) {
-            var d = item['data'][0];
+            var d = item['data']['info'];
             var value = item['value'];
             var title = d['Subject'] + ' ' + d['Catalog Number'];
             var name = d['Course Title'];
@@ -125,7 +125,7 @@ var ClassPicker = React.createClass({
                 items_dict[val['value']] = val;
                 items.push(val);
             }
-            this.setState({value: val['value'], items: items, items_dict: items_dict});
+            this.setState({value: undefined, items: items, items_dict: items_dict});
         }
     },
 
@@ -136,7 +136,7 @@ var ClassPicker = React.createClass({
         var titles = {};
 
         for(var i=0; i < rows.length; i += 1) {
-            var d = data[rows[i]][0];
+            var d = data[rows[i]]['info'];
             var title = d['Subject'] + ' ' + d['Catalog Number'];
             var option = {value: rows[i], label: title, data: data[rows[i]]};
             options.push(option);
@@ -229,7 +229,7 @@ var App = React.createClass({
     },
 
     onGenerate: function(items) {
-        convertToConstraint(items);
+        var convertToConstraint(items);
     },
 
     render: function() {

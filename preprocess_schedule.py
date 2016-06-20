@@ -83,7 +83,7 @@ def get_main(section_types):
 
 dd = {}
 
-out = []
+classes_sections = {}
 
 for key, rows in classes.items():
     possible = set([row['Course Component'] for row in rows])
@@ -98,24 +98,35 @@ for key, rows in classes.items():
         else:
             row['Section Type'] = 'other'
 
-    ## assume script matching at first...
-    for row in rows:
-        row['Section Number'] = row['Section'][0]
 
-    if nums_main != nums_other:
+
+    if nums_main != nums_other and len(nums_other) != 0:
         ## weird numbers
         ## match anything with main!!!
         for row in rows:
-            if row['Section Type'] != 'main':
-                row['Section Number'] = 'x'
+            row['Section Number'] = 'x'
+        sects = {'x'}
+    else:
+        ## strict matching
+        for row in rows:
+            row['Section Number'] = row['Section'].strip('0')[0]
+        sects = nums_main
 
-    k = (tuple(sorted(nums_main)), tuple(sorted(nums_other)))
-    if len(nums_other) > 0:
-        out.append( k )
+    sections = {}
+    for sect in sects:
+        sections[sect] = {}
+        for t in possible:
+            sections[sect][t] = []
 
-    if k not in dd:
-        dd[k] = []
-    dd[k].append(key)
+    for row in rows:
+        sect = row['Section Number']
+        t = row['Course Component']
+        sections[sect][t].append(row)
+
+    classes_sections[key] = {}
+    classes_sections[key]['info'] = rows[0]
+    classes_sections[key]['sections'] = sections
 
 with open('schedule-grouped.json', 'w') as f:
-    json.dump(classes, f, sort_keys=True)
+    json.dump(classes_sections, f, sort_keys=True)
+

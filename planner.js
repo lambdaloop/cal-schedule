@@ -1,28 +1,26 @@
 /*
   This should plan the schedules, given some candidate classes.
+
 */
 
 
-// constraint language
-// ["and", X, Y]
-// ["or", X, Y]
+// organize constraints
+// [class, class, class], find a time for each class
+// {0: .., 1: ..., x: ..}, pick only one section out of 0, 1, .., x
+// {LEC: [...], DIS: [...]}, pick exactly one of each in LEC, DIS, ...
 
-function classConstraint(classItem) {
 
-    return classItem;
-}
-
-function classesConstraint(classes) {
-    var out = ["and"];
+function classSections(classes) {
+    var out = [];
 
     for(var i = 0; i < classes.length; i += 1) {
-        var constraint = classConstraint(classes[i]);
-        out.push(constraint);
+        var sections = classes[i]['data']['sections'];
+        out.push(sections);
     }
     console.log(out);
     return out;
 }
 
 module.exports = {
-    convertToConstraint: classesConstraint
+    convertToConstraint: classSections
 };
