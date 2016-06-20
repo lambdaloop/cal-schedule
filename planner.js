@@ -2,8 +2,8 @@
 var Queue = require('./Queue.js');
 
 /*
-  This should plan the schedules, given some candidate classes.
-*/
+ This should plan the schedules, given some candidate classes.
+ */
 
 /* finds the intersection of 
  * two arrays in a simple fashion.  
@@ -68,16 +68,36 @@ function schedulesOverlap(a, b) {
 // {0: .., 1: ..., x: ..}, pick only one section out of 0, 1, .., x
 // {LEC: [...], DIS: [...]}, pick exactly one of each in LEC, DIS, ...
 
+function addScheduleTime(sections) {
+    for(var section in sections) {
+        var components = sections[section];
+        for(var comp in components) {
+            var rows = components[comp];
+            for(var i = 0; i < rows.length; i += 1) {
+                var row = rows[i];
+                row['ScheduleTime'] = new ScheduleTime(row['Meeting Days'], row['Start Time'], row['End Time']);
+                rows[i] = row;
+            }
+        }
+    }
+    return sections;
+}
 
 function classSections(classes) {
     var out = [];
 
     for(var i = 0; i < classes.length; i += 1) {
         var sections = classes[i]['data']['sections'];
+        sections = addScheduleTime(sections);
         out.push(sections);
     }
     console.log(out);
     return out;
+}
+
+function possibleCombos(sections, visited) {
+    // all possible combinations of classes
+    // TODO: write function that lists possibilities, given visited so far (exclude overlapping times)
 }
 
 function proposePossible(classes) {
@@ -104,16 +124,18 @@ function proposePossible(classes) {
         }
 
         var sections = classes[ix];
-        for(var section in sections) {
-            var sec = sections[section];
-            // need to pick one of each
-            // TODO:
-            // write function that lists possibilities, given visited so far (exclude overlapping times)
-            // add each possibility to visited, and add in queue
+        var combos = possibleCombos(sections, visited);
+        
+        for(var i = 0; i < combos.length; i += 1) {
+            var combo = combos[i];
+            var visited_new = visited.slice();
+            visited_new.push(combo);
+            var state_new = [visited_new, ix+1];
+            q.enqueue(state_new);
         }
     }
-    
-    
+
+    return possible;
 }
 
 module.exports = {
