@@ -20,7 +20,7 @@ require('./style.less');
 
 
 var planner = require('./planner.js');
-var convertToConstraint = planner.convertToConstraint;
+var possibleCalendars = planner.possibleCalendars;
 
 function loadJSON(callback) {
     var xobj = new XMLHttpRequest();
@@ -226,7 +226,7 @@ var App = React.createClass({
     },
 
     onGenerate: function(items) {
-        convertToConstraint(items);
+        console.log(possibleCalendars(items));
     },
 
     render: function() {

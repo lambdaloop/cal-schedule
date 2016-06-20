@@ -1,12 +1,11 @@
-
 var Queue = require('./Queue.js');
 
 /*
  This should plan the schedules, given some candidate classes.
  */
 
-/* finds the intersection of 
- * two arrays in a simple fashion.  
+/* finds the intersection of
+ * two arrays in a simple fashion.
  *
  * params must already be sorted
  * from http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
@@ -95,9 +94,67 @@ function classSections(classes) {
     return out;
 }
 
-function possibleCombos(sections, visited) {
+// picked = [[c1, c2], [c3, c4], ...]
+// items = [c1, c2, c3]
+
+function checkOverlap(stime, picked, items) {
+    for(var i = 0; i < items.length; i += 1) {
+        var item = items[i];
+        if(item['ScheduleTime'].overlaps(stime)) {
+            return true;
+        }
+    }
+    for(var i = 0; i < picked.length; i += 1) {
+        for(var j = 0; j < picked[i].length; j += 1) {
+            var item = picked[i][j];
+            if(item['ScheduleTime'].overlaps(stime)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function possibleCombos(sections, picked) {
     // all possible combinations of classes
-    // TODO: write function that lists possibilities, given visited so far (exclude overlapping times)
+    // TODO: write function that lists possibilities, given picked so far (exclude overlapping times)
+    var possible = [];
+
+    for(var section in sections) {
+        var components = sections[section];
+        var keys = Object.keys(components);
+        
+        var q = new Queue();
+        q.enqueue([[], 0]);
+
+        while(!q.isEmpty()) {
+            var state = q.dequeue();
+            var items = state[0];
+            var key_ix = state[1];
+
+            if(key_ix >= keys.length) {
+                possible.push(items);
+                continue;
+            }
+            
+            var comp = keys[key_ix];
+            var rows = components[comp];
+            
+            for(var i = 0; i < rows.length; i += 1) {
+                var row = rows[i];
+                if(!checkOverlap(row['ScheduleTime'], picked, items)) {
+                    var items_new = items.slice();
+                    items_new.push(row);
+                    var state_new = [items_new, key_ix + 1];
+                    q.enqueue(state_new);
+                }
+            }
+            
+        }
+    }
+
+    return possible;
 }
 
 function proposePossible(classes) {
@@ -105,10 +162,10 @@ function proposePossible(classes) {
         return [];
     }
 
-    // state is (visited, next_index)
-    
+    // state is (picked, next_index)
+
     var possible = [];
-    
+
     var q = new Queue();
 
     var state = [[], 0];
@@ -116,21 +173,21 @@ function proposePossible(classes) {
 
     while(!q.isEmpty()) {
         state = q.dequeue();
-        var visited = state[0].slice();
+        var picked = state[0].slice();
         var ix = state[1];
         if(ix >= classes.length) {
-            possible.push(visited);
+            possible.push(picked);
             continue;
         }
 
         var sections = classes[ix];
-        var combos = possibleCombos(sections, visited);
-        
+        var combos = possibleCombos(sections, picked);
+
         for(var i = 0; i < combos.length; i += 1) {
             var combo = combos[i];
-            var visited_new = visited.slice();
-            visited_new.push(combo);
-            var state_new = [visited_new, ix+1];
+            var picked_new = picked.slice();
+            picked_new.push(combo);
+            var state_new = [picked_new, ix+1];
             q.enqueue(state_new);
         }
     }
@@ -138,6 +195,11 @@ function proposePossible(classes) {
     return possible;
 }
 
+function possibleCalendars(classes) {
+    var csections = classSections(classes);
+    return proposePossible(csections);
+}
+
 module.exports = {
-    convertToConstraint: classSections
+    possibleCalendars: possibleCalendars
 };
