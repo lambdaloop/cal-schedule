@@ -229,7 +229,7 @@ var App = React.createClass({
     },
 
     onGenerate: function(items) {
-        var convertToConstraint(items);
+        convertToConstraint(items);
     },
 
     render: function() {
