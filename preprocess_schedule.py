@@ -13,22 +13,109 @@ data_d = [d for d in data_d if d['Start Time'] != '0:00' and d['Start Time'] != 
 
 classes = {}
 
+## group by class
 for row in data_d:
     if row['Start Time'] == row['End Time'] and \
-       row['Start Time'] == '0:00' or row['Start Time'] == '':
+       (row['Start Time'] == '0:00' or row['Start Time'] == ''):
         continue
 
     if row['Course Component'] == 'GRP':
         continue
-    
+
     # key = (row['Subject'], row['Catalog Number'], row['Course Title'])
     # key = (row['Subject'], row['Catalog Number'])
     key = '{} {}'.format(row['Subject'], row['Catalog Number'])
-    
+
+    row['Key'] = key
+
     if key not in classes:
         classes[key] = []
-        
+
     classes[key].append(row)
+
+## take care of doubles with different instructors (co-teaching case)
+for key, rows in classes.items():
+    GROUPS = {}
+
+    for row in rows:
+        num = row['Class Number']
+        if num in GROUPS:
+            GROUPS[num]['Instructor Name']  += '; ' + row['Instructor Name']
+        else:
+            GROUPS[num] = row
+
+    rows_new = [x[1] for x in GROUPS.items()]
+    classes[key] = rows_new
+
+## take care of section numbers
+## figure out which sections correspond with which lecture
+
+## 3 different versions
+## multiple lectures: DISC and LAB are properly labeled corresponding to lecture (first digit)
+## 1 lecture: all LABS, DISC, whatever should match the lecture, sometimes don't (see ELENG 16A, ELENG 118)
+## multiple lectures: more lab/disc numbers than lectures, all LAB/DISC numbers should match
+
+## how to get main section
+## if just one type, then that one is main
+## otherwise use this ordering (this takes care of all the classes)
+## LEC > SEM >  ... > LAB > DIS
+
+def get_main(section_types):
+    if len(section_types) == 1:
+        return list(section_types)[0]
+
+    section_types = set(section_types)
+
+    section_types.discard('DIS')
+
+    if len(section_types) == 1:
+        return list(section_types)[0]
+
+    section_types.discard('LAB')
+
+    if len(section_types) == 1:
+        return list(section_types)[0]
+
+    if 'LEC' in section_types:
+        return 'LEC'
+    elif 'SEM' in section_types:
+        return 'SEM'
+
+dd = {}
+
+out = []
+
+for key, rows in classes.items():
+    possible = set([row['Course Component'] for row in rows])
+    main = get_main(possible)
+
+    nums_main = set([row['Section'].strip('0')[0] for row in rows if row['Course Component'] == main])
+    nums_other = set([row['Section'].strip('0')[0] for row in rows if row['Course Component'] != main])
+
+    for row in rows:
+        if row['Course Component'] == main:
+            row['Section Type'] = 'main'
+        else:
+            row['Section Type'] = 'other'
+
+    ## assume script matching at first...
+    for row in rows:
+        row['Section Number'] = row['Section'][0]
+
+    if nums_main != nums_other:
+        ## weird numbers
+        ## match anything with main!!!
+        for row in rows:
+            if row['Section Type'] != 'main':
+                row['Section Number'] = 'x'
+
+    k = (tuple(sorted(nums_main)), tuple(sorted(nums_other)))
+    if len(nums_other) > 0:
+        out.append( k )
+
+    if k not in dd:
+        dd[k] = []
+    dd[k].append(key)
 
 with open('schedule-grouped.json', 'w') as f:
     json.dump(classes, f, sort_keys=True)
