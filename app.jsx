@@ -23,7 +23,6 @@ var planner = require('./planner.js');
 var convertToConstraint = planner.convertToConstraint;
 
 function loadJSON(callback) {
-
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
     xobj.open('GET', 'schedule-grouped.json', true); // Replace 'my_data' with the path to your file
@@ -184,7 +183,6 @@ var ClassPicker = React.createClass({
     
     render: function() {
         var options = this.state.options;
-
         return (
             <div className="ClassPicker">
                 <Select value={this.state.value}
@@ -207,7 +205,6 @@ var Calendar = React.createClass({
             </div>
         );
     }
-
 });
 
 var App = React.createClass({
