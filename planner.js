@@ -57,11 +57,6 @@ function schedulesOverlap(a, b) {
     return a.overlaps(b);
 }
 
-// var x = new ScheduleTime("MWF", "10:00", "12:29");
-// var y = new ScheduleTime("WF", "10:30", "12:29");
-// var z = new ScheduleTime("R", "10:30", "12:29");
-// var a = new ScheduleTime("R", "14:30", "15:29");
-
 // constraints
 // [class, class, class], find a time for each class
 // {0: .., 1: ..., x: ..}, pick only one section out of 0, 1, .., x
@@ -118,15 +113,18 @@ function checkOverlap(stime, picked, items) {
 
 function possibleCombos(sections, picked) {
     // all possible combinations of classes
-    // TODO: write function that lists possibilities, given picked so far (exclude overlapping times)
+    // lists possibilities, given picked so far (exclude overlapping times)
     var possible = [];
 
     for(var section in sections) {
         var components = sections[section];
         var keys = Object.keys(components);
-        
+
+        // state is picked, key_ix
+
         var q = new Queue();
         q.enqueue([[], 0]);
+
 
         while(!q.isEmpty()) {
             var state = q.dequeue();
@@ -137,10 +135,10 @@ function possibleCombos(sections, picked) {
                 possible.push(items);
                 continue;
             }
-            
+
             var comp = keys[key_ix];
             var rows = components[comp];
-            
+
             for(var i = 0; i < rows.length; i += 1) {
                 var row = rows[i];
                 if(!checkOverlap(row['ScheduleTime'], picked, items)) {
@@ -150,7 +148,7 @@ function possibleCombos(sections, picked) {
                     q.enqueue(state_new);
                 }
             }
-            
+
         }
     }
 
