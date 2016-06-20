@@ -4,6 +4,9 @@ var router = require("react-router");
 
 var Router = router.Router;
 var Route = router.Route;
+var IndexRoute = router.IndexRoute;
+var Link = router.Link;
+
 var browserHistory = router.browserHistory;
 var hashHistory = router.hashHistory;
 
@@ -34,6 +37,9 @@ function loadJSON(callback) {
     };
     xobj.send(null);
 }
+
+var DATA = null;
+
 
 var dict_zip = function (key_array, val_array) {
     if (key_array.length === val_array.length) {
@@ -67,7 +73,7 @@ var ClassList = React.createClass({
 
         this.props.updatePickedItems(pickedItems);
     },
-    
+
     componentWillReceiveProps: function(nextProps) {
         if(nextProps['items']) {
             this.updatePickedItems(nextProps['items']);
@@ -84,7 +90,7 @@ var ClassList = React.createClass({
 
         this.props.updatePickedItems(pickedItems);
     },
-    
+
     render: function() {
         var items = this.props.items.map(function(item) {
             var d = item['data']['info'];
@@ -92,11 +98,14 @@ var ClassList = React.createClass({
             var title = d['Subject'] + ' ' + d['Catalog Number'];
             var name = d['Course Title'];
             var checked = this.state.pickedItems[value];
+
+            var url = "/class/" + value.replace(' ', '-');
+
             return (
                 <div key={value}>
                     <input type="checkbox" value={value}
                            checked={checked} onChange={this.checkItem}/>
-                    {title} -- {name}
+                    <span>{title} -- {name}</span> <Link to={url}>(sections)</Link>
                 </div>
             );
         }.bind(this));
@@ -148,19 +157,13 @@ var ClassPicker = React.createClass({
 
     getInitialState: function() {
         return {value: undefined, options: [], items: [], items_dict: {}};
-    }
-    ,
-    componentWillReceiveProps: function(nextProps) {
-        if(nextProps['data']) {
-            this.updateOptions(nextProps['data']);
-        }
     },
 
     getPickedItems: function() {
         var out = [];
         var pickedItems = this.pickedItems;
         var items = this.state.items;
-        
+
         for(var i=0; i < items.length; i += 1) {
             var item = items[i];
             var value = item['value'];
@@ -170,8 +173,10 @@ var ClassPicker = React.createClass({
         }
         return out;
     },
-    
+
     componentDidMount: function() {
+        this.updateOptions(DATA);
+
         $('#generate').click(function() {
             this.props.onGenerate(this.getPickedItems());
         }.bind(this));
@@ -180,7 +185,7 @@ var ClassPicker = React.createClass({
     updatePickedItems: function(pickedItems) {
         this.pickedItems = pickedItems;
     },
-    
+
     render: function() {
         var options = this.state.options;
         return (
@@ -207,18 +212,57 @@ var Calendar = React.createClass({
     }
 });
 
+var Home = React.createClass({
+    render: function() {
+        return <div>Welcome to the scheduler! Pick some classes on the left to start</div>
+    }
+});
+
+var ClassSection = React.createClass({
+    render: function() {
+        var sectionNumber = this.props.sectionNumber;
+        var section = this.props.section;
+
+        var rows = [];
+
+        for(var comp in section) {
+            section[comp].map(function(item) {
+                var out = (
+                    <div>{item["Class Number"]} | {item["Course Component"]} | {item["Start Time"]} -- {item["End Time"]}</div>
+                );
+                rows.push(out);
+            });
+        }
+        
+        return <div>{rows}</div>;
+    }
+});
+
+var ClassDetails = React.createClass({
+    render: function() {
+        var course_id = this.props.params.course;
+        course_id = course_id.replace('-', ' ');
+
+        var course = DATA[course_id];
+        console.log(course);
+
+        var sections = [];
+        for(var section in course['sections']) {
+            var s = <ClassSection sectionNumber={section} section={course['sections'][section]} />;
+            sections.push(s);
+        }
+
+        return (
+            <div>
+                <div>Course {course_id}</div>
+                {sections}
+            </div>
+        );
+    }
+});
+
 var App = React.createClass({
     componentDidMount: function() {
-        this.loadData();
-    },
-
-    loadData: function() {
-        // Parse JSON string into object
-        loadJSON(function(response) {
-            var data = JSON.parse(response);
-            window.data = data;
-            this.setState({'data': data});
-        }.bind(this));
     },
 
     getInitialState: function() {
@@ -232,17 +276,42 @@ var App = React.createClass({
     render: function() {
         return (
             <div>
-                <ClassPicker data={this.state.data} onGenerate={this.onGenerate} />
-                <Calendar />
+                <ClassPicker onGenerate={this.onGenerate} />
+                <div className="SideView">
+                    {this.props.children}
+                </div>
             </div>
         );
     }
 });
+
+
+function fetchData() {
+    // Parse JSON string into object
+    loadJSON(function(response) {
+        DATA = JSON.parse(response);
+        window.data = DATA;
+        render();
+    }.bind(this));
+}
+
 
 /* ReactDOM.render((
    <Router history={hashHistory}>
    <Route path="/" component={App} />
    </Router>
    ), document.getElementById('app')) */
+function render() {
+    ReactDOM.render((
+        <Router>
+            <Route path="/" component={App}>
+                <IndexRoute component={Home}/>
+                <Route path="/class/:course" component={ClassDetails}/>
+                <Route path="/calendar" component={Calendar}/>
+            </Route>
+        </Router>
+    ), document.getElementById('app'));
+}
+/* ReactDOM.render(<App/>, document.getElementById('app')); */
 
-ReactDOM.render(<App/>, document.getElementById('app'));
+$(document).ready(fetchData);
