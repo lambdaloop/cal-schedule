@@ -99,7 +99,6 @@ for key, rows in classes.items():
             row['Section Type'] = 'other'
 
 
-
     if nums_main != nums_other and len(nums_other) != 0:
         ## weird numbers
         ## match anything with main!!!
@@ -118,6 +117,8 @@ for key, rows in classes.items():
         for t in possible:
             sections[sect][t] = []
 
+    rows = sorted(rows, key=lambda x: x['Section'])
+            
     for row in rows:
         sect = row['Section Number']
         t = row['Course Component']

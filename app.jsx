@@ -218,23 +218,72 @@ var Home = React.createClass({
     }
 });
 
+function sortedComps(comps_in) {
+    var comps = comps_in.slice();
+    var ordering = ['LEC', 'SEM', 'LAB']
+    comps.sort(function(a, b) {
+        if(a == b) return 0;
+
+        for(var i = 0; i < ordering.length; i += 1) {
+            var c = ordering[i];
+            if(a == c) return -1;
+            else if(b == c) return 1;
+        }
+
+        if(a < b) return -1;
+        else return 1;
+    });
+    return comps;
+}
+
 var ClassSection = React.createClass({
     render: function() {
         var sectionNumber = this.props.sectionNumber;
-        var section = this.props.section;
+        var sections = this.props.sections;
 
         var rows = [];
 
-        for(var comp in section) {
-            section[comp].map(function(item) {
-                var out = (
-                    <div>{item["Class Number"]} | {item["Course Component"]} | {item["Start Time"]} -- {item["End Time"]}</div>
-                );
-                rows.push(out);
-            });
+        for(var sec in sections) {
+            var section = sections[sec];
+
+            var comps = Object.keys(section);
+            comps = sortedComps(comps);
+
+            for(var i = 0; i < comps.length; i += 1) {
+                var comp = comps[i];
+                section[comp].map(function(item) {
+                    var out = (
+                        <tr>
+                            <td>
+                                <input type="checkbox" onChange={this.checkItem} />
+                            </td>
+                            <td>{item["Class Number"]}</td>
+                            <td>{item["Course Component"]} {item["Section"]}</td>
+                            <td>{item["Meeting Days"]}</td>
+                            <td>{item["Start Time"]} -- {item["End Time"]}</td>
+                            <td>{item["Instructor Name"]}</td>
+                        </tr>
+                    );
+                    rows.push(out);
+                });
+            }
         }
-        
-        return <div>{rows}</div>;
+
+        return (
+            <table className="ClassSection">
+                <tbody>
+                    <tr>
+                        <th><input type="checkbox" onChange={this.checkItem} /></th>
+                        <th>CCN</th>
+                        <th>Section</th>
+                        <th>Days</th>
+                        <th>Time</th>
+                        <th>Instructor</th>
+                    </tr>
+                    {rows}
+                </tbody>
+            </table>
+        );
     }
 });
 
@@ -246,16 +295,16 @@ var ClassDetails = React.createClass({
         var course = DATA[course_id];
         console.log(course);
 
-        var sections = [];
-        for(var section in course['sections']) {
-            var s = <ClassSection sectionNumber={section} section={course['sections'][section]} />;
-            sections.push(s);
-        }
+        /* var sections = [];
+           for(var section in course['sections']) {
+           var s = ;
+           sections.push(s);
+           } */
 
         return (
             <div>
-                <div>Course {course_id}</div>
-                {sections}
+                <div>{course_id}</div>
+                <ClassSection sections={course['sections']} />
             </div>
         );
     }
@@ -303,7 +352,7 @@ function fetchData() {
    ), document.getElementById('app')) */
 function render() {
     ReactDOM.render((
-        <Router>
+        <Router history={hashHistory}>
             <Route path="/" component={App}>
                 <IndexRoute component={Home}/>
                 <Route path="/class/:course" component={ClassDetails}/>
@@ -314,4 +363,7 @@ function render() {
 }
 /* ReactDOM.render(<App/>, document.getElementById('app')); */
 
-$(document).ready(fetchData);
+$(document).ready(function() {
+    window.location = '#/';
+    fetchData();
+});
