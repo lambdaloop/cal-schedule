@@ -35,7 +35,7 @@ export class ClassSection extends Component {
                 const comp = comps[i]
                 section[comp].map(item => {
                     const out = (
-                        <tr>
+                        <tr key={i}>
                           <td>
                             <input type="checkbox" />
                           </td>

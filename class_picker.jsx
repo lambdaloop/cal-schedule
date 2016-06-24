@@ -27,7 +27,7 @@ class ClassList extends Component {
         this.props.updatePickedItems(pickedItems)
     }
 
-    componenltWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps) {
         if(nextProps['items']) {
             this.updatePickedItems(nextProps['items'])
         }
@@ -80,7 +80,7 @@ export class ClassPicker extends Component {
         super(props)
         this.state = {value: undefined, options: [], items: [], items_dict: {}}
 
-        this.pickedItems = [];
+        this.pickedItems = {};
         
         this.onChange = this.onChange.bind(this)
         this.updatePickedItems = this.updatePickedItems.bind(this)
