@@ -10,6 +10,7 @@ require('./style.less')
 import { possibleCalendars } from './planner.js'
 import { ClassDetails } from './class_details.jsx'
 import { ClassPicker } from './class_picker.jsx'
+import { Calendar } from './calendar.jsx'
 
 var DATA = null
 
@@ -37,17 +38,6 @@ function fetchData(callback) {
 }
 
 
-
-
-class Calendar extends Component {
-    render() {
-        return (
-            <div className="Calendar">
-              Calendar
-            </div>
-        )
-    }
-}
 
 class Home extends Component {
     render() {
