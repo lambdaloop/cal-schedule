@@ -1,7 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import { Router, Route, IndexRoute, Link } from "react-router"
-import { browserHistory, hashHistory } from "react-router"
+import { hashHistory } from "react-router"
 
 import {default as Select} from 'react-virtualized-select'
 require('react-virtualized/styles.css')
@@ -28,21 +28,6 @@ function loadJSON(callback) {
 }
 
 var DATA = null
-
-
-const dict_zip = (key_array, val_array) => {
-    if (key_array.length === val_array.length) {
-        const obj = {}
-        const len = key_array.length
-
-        for (let i = 0;i < len; i++) {
-            obj[key_array[i]] = val_array[i]
-        }
-        return obj
-    } else {
-        console.log("dict_zip bad args length")
-    }
-}
 
 
 const ClassList = React.createClass({
@@ -129,8 +114,6 @@ const ClassPicker = React.createClass({
     updateOptions(data) {
         const options = []
         const rows = Object.keys(data)
-
-        const titles = {}
 
         for(let i=0; i < rows.length; i += 1) {
             const d = data[rows[i]]['info']
