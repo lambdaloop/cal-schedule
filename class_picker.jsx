@@ -131,7 +131,7 @@ export class ClassPicker extends Component {
     }
 
     componentDidMount() {
-        this.updateOptions(this.props.data)
+        this.updateOptions(window.data)
 
         $('#generate').click(() => {
             this.props.onGenerate(this.getPickedItems())

@@ -35,7 +35,7 @@ export class ClassSection extends Component {
                 const comp = comps[i]
                 section[comp].map(item => {
                     const out = (
-                        <tr key={i}>
+                        <tr key={item["Class Number"]}>
                           <td>
                             <input type="checkbox" />
                           </td>
@@ -74,7 +74,7 @@ export class ClassDetails extends Component {
         let course_id = this.props.params.course
         course_id = course_id.replace('-', ' ')
 
-        const {data} = this.props;
+        const data = window.data;
         const course = data[course_id]
         console.log(course)
 

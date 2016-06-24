@@ -33,6 +33,7 @@ function fetchData(callback) {
     loadJSON(response => {
         DATA = JSON.parse(response)
         window.data = DATA
+        console.log('data loaded!')
         callback()
     })
 }
@@ -54,19 +55,15 @@ class App extends Component {
     
     onGenerate(items) {
         const calendars = possibleCalendars(items)
+        console.log(calendars)
     }
 
     render() {
-        const children = React.cloneElement(this.props.children,
-                                            {
-                                                data: DATA
-                                            })
-        
         return (
             <div>
-              <ClassPicker data={DATA} onGenerate={this.onGenerate} />
+              <ClassPicker onGenerate={this.onGenerate} />
               <div className="SideView">
-                {children}
+                {this.props.children}
               </div>
             </div>
         )
