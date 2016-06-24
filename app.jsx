@@ -255,7 +255,7 @@ var ClassSection = React.createClass({
                     var out = (
                         <tr>
                             <td>
-                                <input type="checkbox" onChange={this.checkItem} />
+                                <input type="checkbox" />
                             </td>
                             <td>{item["Class Number"]}</td>
                             <td>{item["Course Component"]} {item["Section"]}</td>
@@ -273,7 +273,7 @@ var ClassSection = React.createClass({
             <table className="ClassSection">
                 <tbody>
                     <tr>
-                        <th><input type="checkbox" onChange={this.checkItem} /></th>
+                        <th><input type="checkbox" /></th>
                         <th>CCN</th>
                         <th>Section</th>
                         <th>Days</th>
