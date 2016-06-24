@@ -52,5 +52,3 @@ function courses(state = {picked: [], ids: {}}, action) {
 export const reducer = combineReducers({
     courses
 })
-
-

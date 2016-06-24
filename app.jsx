@@ -66,7 +66,7 @@ class App extends Component {
         super(props)
         this.onGenerate = this.onGenerate.bind(this)
     }
-    
+
     onGenerate() {
         let items = getPickedItems();
         const calendars = possibleCalendars(items)
@@ -105,5 +105,3 @@ $(document).ready(() => {
     window.store = store
     fetchData(render);
 })
-
-

@@ -19,7 +19,7 @@ class ClassList extends Component {
     componentWillUnmount() {
         this.unsubscribe()
     }
-   
+
     checkItem(e) {
         const target = $(e['target'])
         const value = target.attr('value')
