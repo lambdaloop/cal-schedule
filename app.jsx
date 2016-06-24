@@ -295,12 +295,6 @@ var ClassDetails = React.createClass({
         var course = DATA[course_id];
         console.log(course);
 
-        /* var sections = [];
-           for(var section in course['sections']) {
-           var s = ;
-           sections.push(s);
-           } */
-
         return (
             <div>
                 <div>{course_id}</div>
@@ -315,19 +309,26 @@ var App = React.createClass({
     },
 
     getInitialState: function() {
-        return {data: null};
+        return {calendars: []};
     },
 
     onGenerate: function(items) {
-        console.log(possibleCalendars(items));
+        var calendars = possibleCalendars(items);
+        this.setState({calendars: calendars});
     },
 
     render: function() {
+        var children = React.cloneElement(this.props.children,
+                                          {
+                                              calendars: this.state.calendars,
+                                              items: this.state.items
+                                          });
+        
         return (
             <div>
                 <ClassPicker onGenerate={this.onGenerate} />
                 <div className="SideView">
-                    {this.props.children}
+                    {children}
                 </div>
             </div>
         );
@@ -345,11 +346,6 @@ function fetchData() {
 }
 
 
-/* ReactDOM.render((
-   <Router history={hashHistory}>
-   <Route path="/" component={App} />
-   </Router>
-   ), document.getElementById('app')) */
 function render() {
     ReactDOM.render((
         <Router history={hashHistory}>
