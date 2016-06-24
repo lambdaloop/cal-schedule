@@ -85,7 +85,7 @@ function classSections(classes) {
         sections = addScheduleTime(sections);
         out.push(sections);
     }
-    console.log(out);
+
     return out;
 }
 
