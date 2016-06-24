@@ -2,7 +2,7 @@ import React, { Component } from "react"
 import ReactDOM from "react-dom"
 import { Router, Route, IndexRoute, Link } from "react-router"
 import { hashHistory } from "react-router"
-
+import { createStore } from 'redux'
 
 require('./style.less')
 
@@ -11,6 +11,7 @@ import { possibleCalendars } from './planner.js'
 import { ClassDetails } from './class_details.jsx'
 import { ClassPicker } from './class_picker.jsx'
 import { Calendar } from './calendar.jsx'
+import { reducer } from './reducers.js'
 
 var DATA = null
 
@@ -39,6 +40,11 @@ function fetchData(callback) {
 }
 
 
+const store = createStore(reducer)
+store.subscribe(() => {
+    console.log('state')
+    console.log(store.getState())
+})
 
 class Home extends Component {
     render() {
@@ -46,14 +52,23 @@ class Home extends Component {
     }
 }
 
+export function getPickedItems() {
+    let courses = window.store.getState().courses.picked
+    return courses.filter(function(item) {
+        return item['selected']
+    }).map(function(item) {
+        return item['course']
+    })
+}
+
 class App extends Component {
     constructor(props) {
         super(props)
-        this.state = {calendars: []}
         this.onGenerate = this.onGenerate.bind(this)
     }
     
-    onGenerate(items) {
+    onGenerate() {
+        let items = getPickedItems();
         const calendars = possibleCalendars(items)
         console.log(calendars)
     }
@@ -87,6 +102,7 @@ const render = () => {
 
 $(document).ready(() => {
     window.location = '#/'
+    window.store = store
     fetchData(render);
 })
 

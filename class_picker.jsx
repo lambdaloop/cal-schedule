@@ -9,48 +9,37 @@ require('react-virtualized-select/styles.css')
 class ClassList extends Component {
     constructor(props) {
         super(props)
-        this.state = {pickedItems: {}}
-        this.updatePickedItems = this.updatePickedItems.bind(this)
         this.checkItem = this.checkItem.bind(this)
     }
 
-    updatePickedItems(items) {
-        const pickedItems = this.state.pickedItems
-        for(let i=0; i < items.length; i += 1) {
-            const value = items[i]['value']
-            if(pickedItems[value] === undefined) {
-                pickedItems[value] = true
-            }
-        }
-        this.setState({pickedItems})
-
-        this.props.updatePickedItems(pickedItems)
+    componentDidMount() {
+        this.unsubscribe = window.store.subscribe(() => this.forceUpdate())
     }
 
-    componentWillReceiveProps(nextProps) {
-        if(nextProps['items']) {
-            this.updatePickedItems(nextProps['items'])
-        }
+    componentWillUnmount() {
+        this.unsubscribe()
     }
-
+   
     checkItem(e) {
         const target = $(e['target'])
         const value = target.attr('value')
 
-        const pickedItems = this.state.pickedItems
-        pickedItems[value] = !pickedItems[value]
-        this.setState({pickedItems})
-
-        this.props.updatePickedItems(pickedItems)
+        window.store.dispatch({
+            type: 'TOGGLE_COURSE',
+            id: value
+        })
     }
 
     render() {
+        console.log('items: ')
+        console.log(this.props.items)
+
         const items = this.props.items.map(item => {
-            const d = item['data']['info']
-            const value = item['value']
+            const d = item['course']['data']['info']
+            const value = item['id']
             const title = `${d['Subject']} ${d['Catalog Number']}`
             const name = d['Course Title']
-            const checked = this.state.pickedItems[value]
+            const checked = item['selected']
 
             const url = `/class/${value.replace(' ', '-')}`
 
@@ -78,26 +67,30 @@ export class ClassPicker extends Component {
 
     constructor(props) {
         super(props)
-        this.state = {value: undefined, options: [], items: [], items_dict: {}}
-
-        this.pickedItems = {};
-        
+        this.updateOptions(window.data)
         this.onChange = this.onChange.bind(this)
-        this.updatePickedItems = this.updatePickedItems.bind(this)
     }
-    
+
+    componentDidMount() {
+        this.unsubscribe = window.store.subscribe(() => this.forceUpdate())
+
+        $('#generate').click(this.props.onGenerate)
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe()
+    }
+
     onChange(val) {
         if(val == null) {
-            this.setState({value: undefined})
-        } else {
-            const items = this.state.items
-            const items_dict = this.state.items_dict
-            if(!items_dict[val['value']]) {
-                items_dict[val['value']] = val
-                items.push(val)
-            }
-            this.setState({value: undefined, items, items_dict})
+            return
         }
+
+        window.store.dispatch({
+            type: 'ADD_COURSE',
+            course: val,
+            id: val['value']
+        })
     }
 
     updateOptions(data) {
@@ -111,46 +104,21 @@ export class ClassPicker extends Component {
             options.push(option)
         }
 
-        this.setState({options})
-    }
-
-
-    getPickedItems() {
-        const out = []
-        const pickedItems = this.pickedItems
-        const items = this.state.items
-
-        for(let i=0; i < items.length; i += 1) {
-            const item = items[i]
-            const value = item['value']
-            if(pickedItems[value]) {
-                out.push(item)
-            }
-        }
-        return out
-    }
-
-    componentDidMount() {
-        this.updateOptions(window.data)
-
-        $('#generate').click(() => {
-            this.props.onGenerate(this.getPickedItems())
-        })
-    }
-
-    updatePickedItems(pickedItems) {
-        this.pickedItems = pickedItems
+        this.options = options
     }
 
     render() {
-        const options = this.state.options
+        const options = this.options
+        var state = window.store.getState()
+        console.log(state.courses)
+
         return (
             <div className="ClassPicker">
-              <Select value={this.state.value}
+              <Select value={undefined}
                       options={options}
                       onChange={this.onChange}
                       />
-              <ClassList items={this.state.items} updatePickedItems={this.updatePickedItems} />
+              <ClassList items={state.courses.picked}  />
               <button id="generate" type="button">Generate schedules!</button>
             </div>
         )

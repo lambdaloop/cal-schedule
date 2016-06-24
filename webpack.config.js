@@ -3,7 +3,7 @@ var CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
     entry: {
-        bundle: "./app.jsx"
+        bundle: ["babel-polyfill", "./app.jsx"]
     },
     output: {
         path: 'build',
@@ -15,6 +15,11 @@ module.exports = {
               loader: 'babel-loader',
               exclude: /node_modules/,
               query: { presets:['es2015', 'react'] } },
+
+            { test: /\.js$/,
+              loader: 'babel-loader',
+              exclude: /node_modules/,
+              query: { presets:['es2015'] } },
 
             { test: /\.css$/, loader: "style-loader!css-loader?-minimize" },
             { test: /\.less$/, loader: "style-loader!css-loader?-minimize!less-loader" },
