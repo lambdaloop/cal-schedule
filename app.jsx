@@ -1,105 +1,94 @@
-var React = require("react");
-var ReactDOM = require("react-dom");
-var router = require("react-router");
+import React from "react"
+import ReactDOM from "react-dom"
+import { Router, Route, IndexRoute, Link } from "react-router"
+import { browserHistory, hashHistory } from "react-router"
 
-var Router = router.Router;
-var Route = router.Route;
-var IndexRoute = router.IndexRoute;
-var Link = router.Link;
+import {default as Select} from 'react-virtualized-select'
+require('react-virtualized/styles.css')
+require('react-select/dist/react-select.css')
+require('react-virtualized-select/styles.css')
 
-var browserHistory = router.browserHistory;
-var hashHistory = router.hashHistory;
-
-
-/* var Select = require('react-select');
-   require('react-select/dist/react-select.css'); */
-
-var Select = require('react-virtualized-select').default;
-require('react-virtualized/styles.css');
-require('react-select/dist/react-select.css');
-require('react-virtualized-select/styles.css');
-
-require('./style.less');
+require('./style.less')
 
 
-var planner = require('./planner.js');
-var possibleCalendars = planner.possibleCalendars;
+import planner from './planner.js'
+const possibleCalendars = planner.possibleCalendars
 
 function loadJSON(callback) {
-    var xobj = new XMLHttpRequest();
-    xobj.overrideMimeType("application/json");
+    const xobj = new XMLHttpRequest()
+    xobj.overrideMimeType("application/json")
     xobj.open('GET', 'schedule-grouped.json', true); // Replace 'my_data' with the path to your file
-    xobj.onreadystatechange = function () {
+    xobj.onreadystatechange = () => {
         if (xobj.readyState == 4 && xobj.status == "200") {
             // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-            callback(xobj.responseText);
+            callback(xobj.responseText)
         }
-    };
-    xobj.send(null);
+    }
+    xobj.send(null)
 }
 
-var DATA = null;
+var DATA = null
 
 
-var dict_zip = function (key_array, val_array) {
+const dict_zip = (key_array, val_array) => {
     if (key_array.length === val_array.length) {
-        var obj = {};
-        var len = key_array.length;
+        const obj = {}
+        const len = key_array.length
 
-        for (var i = 0;i < len; i++) {
-            obj[key_array[i]] = val_array[i];
+        for (let i = 0;i < len; i++) {
+            obj[key_array[i]] = val_array[i]
         }
-        return obj;
+        return obj
     } else {
-        console.log("dict_zip bad args length");
+        console.log("dict_zip bad args length")
     }
 }
 
 
-var ClassList = React.createClass({
-    getInitialState: function() {
+const ClassList = React.createClass({
+    getInitialState() {
         return {pickedItems: {}}
     },
 
-    updatePickedItems: function(items) {
-        var pickedItems = this.state.pickedItems;
-        for(var i=0; i < items.length; i += 1) {
-            var value = items[i]['value'];
+    updatePickedItems(items) {
+        const pickedItems = this.state.pickedItems
+        for(let i=0; i < items.length; i += 1) {
+            const value = items[i]['value']
             if(pickedItems[value] === undefined) {
-                pickedItems[value] = true;
+                pickedItems[value] = true
             }
         }
-        this.setState({pickedItems: pickedItems});
+        this.setState({pickedItems})
 
-        this.props.updatePickedItems(pickedItems);
+        this.props.updatePickedItems(pickedItems)
     },
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         if(nextProps['items']) {
-            this.updatePickedItems(nextProps['items']);
+            this.updatePickedItems(nextProps['items'])
         }
     },
 
-    checkItem: function(e) {
-        var target = $(e['target']);
-        var value = target.attr('value');
+    checkItem(e) {
+        const target = $(e['target'])
+        const value = target.attr('value')
 
-        var pickedItems = this.state.pickedItems;
-        pickedItems[value] = !pickedItems[value];
-        this.setState({pickedItems: pickedItems});
+        const pickedItems = this.state.pickedItems
+        pickedItems[value] = !pickedItems[value]
+        this.setState({pickedItems})
 
-        this.props.updatePickedItems(pickedItems);
+        this.props.updatePickedItems(pickedItems)
     },
 
-    render: function() {
-        var items = this.props.items.map(function(item) {
-            var d = item['data']['info'];
-            var value = item['value'];
-            var title = d['Subject'] + ' ' + d['Catalog Number'];
-            var name = d['Course Title'];
-            var checked = this.state.pickedItems[value];
+    render() {
+        const items = this.props.items.map(item => {
+            const d = item['data']['info']
+            const value = item['value']
+            const title = `${d['Subject']} ${d['Catalog Number']}`
+            const name = d['Course Title']
+            const checked = this.state.pickedItems[value]
 
-            var url = "/class/" + value.replace(' ', '-');
+            const url = `/class/${value.replace(' ', '-')}`
 
             return (
                 <div key={value}>
@@ -107,8 +96,8 @@ var ClassList = React.createClass({
                            checked={checked} onChange={this.checkItem}/>
                     <span>{title} -- {name}</span> <Link to={url}>(sections)</Link>
                 </div>
-            );
-        }.bind(this));
+            )
+        })
 
         return (
             <div className="ClassList">
@@ -117,77 +106,77 @@ var ClassList = React.createClass({
                     {items}
                 </div>
             </div>
-        );
+        )
     }
-});
+})
 
-var ClassPicker = React.createClass({
-    onChange: function(val) {
-        console.log(val);
+const ClassPicker = React.createClass({
+    onChange(val) {
+        console.log(val)
         if(val == null) {
-            this.setState({value: undefined});
+            this.setState({value: undefined})
         } else {
-            var items = this.state.items;
-            var items_dict = this.state.items_dict;
+            const items = this.state.items
+            const items_dict = this.state.items_dict
             if(!items_dict[val['value']]) {
-                items_dict[val['value']] = val;
-                items.push(val);
+                items_dict[val['value']] = val
+                items.push(val)
             }
-            this.setState({value: undefined, items: items, items_dict: items_dict});
+            this.setState({value: undefined, items, items_dict})
         }
     },
 
-    updateOptions: function(data) {
-        var options = [];
-        var rows = Object.keys(data);
+    updateOptions(data) {
+        const options = []
+        const rows = Object.keys(data)
 
-        var titles = {};
+        const titles = {}
 
-        for(var i=0; i < rows.length; i += 1) {
-            var d = data[rows[i]]['info'];
-            var title = d['Subject'] + ' ' + d['Catalog Number'];
-            var option = {value: rows[i], label: title, data: data[rows[i]]};
-            options.push(option);
+        for(let i=0; i < rows.length; i += 1) {
+            const d = data[rows[i]]['info']
+            const title = `${d['Subject']} ${d['Catalog Number']}`
+            const option = {value: rows[i], label: title, data: data[rows[i]]}
+            options.push(option)
         }
 
-        this.setState({options: options});
-        console.log('loaded');
+        this.setState({options})
+        console.log('loaded')
     },
 
 
-    getInitialState: function() {
-        return {value: undefined, options: [], items: [], items_dict: {}};
+    getInitialState() {
+        return {value: undefined, options: [], items: [], items_dict: {}}
     },
 
-    getPickedItems: function() {
-        var out = [];
-        var pickedItems = this.pickedItems;
-        var items = this.state.items;
+    getPickedItems() {
+        const out = []
+        const pickedItems = this.pickedItems
+        const items = this.state.items
 
-        for(var i=0; i < items.length; i += 1) {
-            var item = items[i];
-            var value = item['value'];
+        for(let i=0; i < items.length; i += 1) {
+            const item = items[i]
+            const value = item['value']
             if(pickedItems[value]) {
-                out.push(item);
+                out.push(item)
             }
         }
-        return out;
+        return out
     },
 
-    componentDidMount: function() {
-        this.updateOptions(DATA);
+    componentDidMount() {
+        this.updateOptions(DATA)
 
-        $('#generate').click(function() {
-            this.props.onGenerate(this.getPickedItems());
-        }.bind(this));
+        $('#generate').click(() => {
+            this.props.onGenerate(this.getPickedItems())
+        })
     },
 
-    updatePickedItems: function(pickedItems) {
-        this.pickedItems = pickedItems;
+    updatePickedItems(pickedItems) {
+        this.pickedItems = pickedItems
     },
 
-    render: function() {
-        var options = this.state.options;
+    render() {
+        const options = this.state.options
         return (
             <div className="ClassPicker">
                 <Select value={this.state.value}
@@ -197,62 +186,62 @@ var ClassPicker = React.createClass({
                 <ClassList items={this.state.items} updatePickedItems={this.updatePickedItems} />
                 <button id="generate" type="button">Generate schedules!</button>
             </div>
-        );
+        )
     }
-});
+})
 
 
-var Calendar = React.createClass({
-    render: function() {
+const Calendar = React.createClass({
+    render() {
         return (
             <div className="Calendar">
                 Calendar
             </div>
-        );
+        )
     }
-});
+})
 
-var Home = React.createClass({
-    render: function() {
+const Home = React.createClass({
+    render() {
         return <div>Welcome to the scheduler! Pick some classes on the left to start</div>
     }
-});
+})
 
 function sortedComps(comps_in) {
-    var comps = comps_in.slice();
-    var ordering = ['LEC', 'SEM', 'LAB']
-    comps.sort(function(a, b) {
-        if(a == b) return 0;
+    const comps = comps_in.slice()
+    const ordering = ['LEC', 'SEM', 'LAB']
+    comps.sort((a, b) => {
+        if(a == b) return 0
 
-        for(var i = 0; i < ordering.length; i += 1) {
-            var c = ordering[i];
-            if(a == c) return -1;
-            else if(b == c) return 1;
+        for(let i = 0; i < ordering.length; i += 1) {
+            const c = ordering[i]
+            if(a == c) return -1
+            else if(b == c) return 1
         }
 
-        if(a < b) return -1;
-        else return 1;
-    });
-    return comps;
+        if(a < b) return -1
+        else return 1
+    })
+    return comps
 }
 
-var ClassSection = React.createClass({
-    render: function() {
-        var sectionNumber = this.props.sectionNumber;
-        var sections = this.props.sections;
+const ClassSection = React.createClass({
+    render() {
 
-        var rows = [];
+        const sections = this.props.sections
 
-        for(var sec in sections) {
-            var section = sections[sec];
+        const rows = []
 
-            var comps = Object.keys(section);
-            comps = sortedComps(comps);
+        for(const sec in sections) {
+            const section = sections[sec]
 
-            for(var i = 0; i < comps.length; i += 1) {
-                var comp = comps[i];
-                section[comp].map(function(item) {
-                    var out = (
+            let comps = Object.keys(section)
+            comps = sortedComps(comps)
+
+            for(let i = 0; i < comps.length; i += 1) {
+                const comp = comps[i]
+                section[comp].map(item => {
+                    const out = (
                         <tr>
                             <td>
                                 <input type="checkbox" />
@@ -263,9 +252,9 @@ var ClassSection = React.createClass({
                             <td>{item["Start Time"]} -- {item["End Time"]}</td>
                             <td>{item["Instructor Name"]}</td>
                         </tr>
-                    );
-                    rows.push(out);
-                });
+                    )
+                    rows.push(out)
+                })
             }
         }
 
@@ -283,46 +272,46 @@ var ClassSection = React.createClass({
                     {rows}
                 </tbody>
             </table>
-        );
+        )
     }
-});
+})
 
-var ClassDetails = React.createClass({
-    render: function() {
-        var course_id = this.props.params.course;
-        course_id = course_id.replace('-', ' ');
+const ClassDetails = React.createClass({
+    render() {
+        let course_id = this.props.params.course
+        course_id = course_id.replace('-', ' ')
 
-        var course = DATA[course_id];
-        console.log(course);
+        const course = DATA[course_id]
+        console.log(course)
 
         return (
             <div>
                 <div>{course_id}</div>
                 <ClassSection sections={course['sections']} />
             </div>
-        );
+        )
     }
-});
+})
 
-var App = React.createClass({
-    componentDidMount: function() {
+const App = React.createClass({
+    componentDidMount() {
     },
 
-    getInitialState: function() {
-        return {calendars: []};
+    getInitialState() {
+        return {calendars: []}
     },
 
-    onGenerate: function(items) {
-        var calendars = possibleCalendars(items);
-        this.setState({calendars: calendars});
+    onGenerate(items) {
+        const calendars = possibleCalendars(items)
+        this.setState({calendars})
     },
 
-    render: function() {
-        var children = React.cloneElement(this.props.children,
+    render() {
+        const children = React.cloneElement(this.props.children,
                                           {
                                               calendars: this.state.calendars,
                                               items: this.state.items
-                                          });
+                                          })
         
         return (
             <div>
@@ -331,22 +320,11 @@ var App = React.createClass({
                     {children}
                 </div>
             </div>
-        );
+        )
     }
-});
+})
 
-
-function fetchData() {
-    // Parse JSON string into object
-    loadJSON(function(response) {
-        DATA = JSON.parse(response);
-        window.data = DATA;
-        render();
-    }.bind(this));
-}
-
-
-function render() {
+const render = () => {
     ReactDOM.render((
         <Router history={hashHistory}>
             <Route path="/" component={App}>
@@ -355,11 +333,22 @@ function render() {
                 <Route path="/calendar" component={Calendar}/>
             </Route>
         </Router>
-    ), document.getElementById('app'));
+    ), document.getElementById('app'))
 }
 /* ReactDOM.render(<App/>, document.getElementById('app')); */
 
-$(document).ready(function() {
-    window.location = '#/';
-    fetchData();
-});
+function fetchData() {
+    // Parse JSON string into object
+    loadJSON(response => {
+        DATA = JSON.parse(response)
+        window.data = DATA
+        render()
+    })
+}
+
+
+
+$(document).ready(() => {
+    window.location = '#/'
+    fetchData()
+})
