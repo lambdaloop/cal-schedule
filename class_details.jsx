@@ -76,7 +76,6 @@ export class ClassDetails extends Component {
 
         const data = window.data;
         const course = data[course_id]
-        console.log(course)
 
         return (
             <div>

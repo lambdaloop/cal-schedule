@@ -31,9 +31,6 @@ class ClassList extends Component {
     }
 
     render() {
-        console.log('items: ')
-        console.log(this.props.items)
-
         const items = this.props.items.map(item => {
             const d = item['course']['data']['info']
             const value = item['id']
@@ -110,7 +107,6 @@ export class ClassPicker extends Component {
     render() {
         const options = this.options
         var state = window.store.getState()
-        console.log(state.courses)
 
         return (
             <div className="ClassPicker">
