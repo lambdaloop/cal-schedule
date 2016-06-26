@@ -10,7 +10,7 @@ require('./style.less')
 import { possibleCalendars } from './planner.js'
 import { ClassDetails } from './class_details.jsx'
 import { ClassPicker } from './class_picker.jsx'
-import { Calendar } from './calendar.jsx'
+import { Calendars } from './calendar.jsx'
 import { reducer } from './reducers.js'
 
 var DATA = null
@@ -70,12 +70,16 @@ class App extends Component {
     onGenerate() {
         let items = getPickedItems();
         const calendars = possibleCalendars(items)
-        console.log(calendars)
+        window.store.dispatch({
+            type: 'SET_CALENDARS',
+            calendars: calendars
+        })
+        window.location = '#/calendar'
     }
 
     render() {
         return (
-            <div>
+            <div className="App">
               <ClassPicker onGenerate={this.onGenerate} />
               <div className="SideView">
                 {this.props.children}
@@ -93,7 +97,7 @@ const render = () => {
           <Route path="/" component={App}>
             <IndexRoute component={Home}/>
             <Route path="/class/:course" component={ClassDetails}/>
-            <Route path="/calendar" component={Calendar}/>
+            <Route path="/calendar" component={Calendars}/>
           </Route>
         </Router>
     ), document.getElementById('app'))

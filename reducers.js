@@ -49,6 +49,16 @@ function courses(state = {picked: [], ids: {}}, action) {
     }
 }
 
+function calendars(state = [], action) {
+    switch(action.type) {
+    case 'SET_CALENDARS':
+        return action.calendars;
+    default:
+        return state;
+    }
+}
+
 export const reducer = combineReducers({
-    courses
+    courses,
+    calendars
 })

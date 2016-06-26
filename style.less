@@ -1,3 +1,11 @@
+html, body, #app, .App {
+    height: 100%;
+}
+
+.Hidden {
+    display: none;
+}
+
 .Select {
     max-width: 190px !important;
 }
@@ -8,13 +16,6 @@
     float: left;
 }
 
-.SideView {
-    display: inline-block;
-    float: left;
-    text-align: center;
-    width: 500px;
-    max-width: 100%;
-}
 
 table {
     border-collapse: collapse;
@@ -47,4 +48,43 @@ input[type=checkbox]
     -webkit-transform: scale(1.8); /* Safari and Chrome */
     -o-transform: scale(1.8); /* Opera */
     padding: 10px;
+}
+
+.SideView {
+    display: inline-block;
+    float: left;
+    text-align: center;
+    width: 600px;
+    max-width: 100%;
+    height: 100%;
+}
+
+.Calendars {
+    height: 100%;
+}
+
+.Calendar {
+    height: 100%;
+}
+
+.CalendarDayColumn {
+    padding-left: 2px;
+    padding-right: 2px;
+    float:left;
+    height: 100%;
+}
+
+.CalendarDaySections {
+    position: relative;
+    margin-top: 20px;
+    height: 90%;
+    margin-bottom: 50px;
+}
+
+.CalendarDayColumnWithSaturday {
+    width: 14%
+}
+
+.CalendarDayColumnWithoutSaturday {
+    width: 15%
 }
