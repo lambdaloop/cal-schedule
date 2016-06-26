@@ -49,10 +49,25 @@ function courses(state = {picked: [], ids: {}}, action) {
     }
 }
 
-function calendars(state = [], action) {
+function calendars(state = {calendars: [], index: undefined}, action) {
     switch(action.type) {
     case 'SET_CALENDARS':
-        return action.calendars;
+        return {
+            calendars: action.calendars,
+            index: 0
+        }
+    case 'NEXT_CALENDAR_INDEX':
+        return Object.assign({}, state, {
+            index: Math.min(state.index + 1, state.calendars.length - 1)
+        })
+    case 'PREV_CALENDAR_INDEX':
+        return Object.assign({}, state, {
+            index: Math.max(state.index - 1, 0)
+        })
+    case 'SET_CALENDAR_INDEX':
+        return Object.assign({}, state, {
+            index: action.index
+        })
     default:
         return state;
     }

@@ -1,13 +1,27 @@
 import React, { Component } from "react"
 
 function timeToMinutes(time) {
-    var s = time.split(':');
+    const s = time.split(':');
     return parseInt(s[0]) * 60 + parseInt(s[1]);
 }
 
+function minutesToTime(total_minutes) {
+    const hours = Math.floor(total_minutes / 60)
+
+    let minutes = total_minutes % 60
+    minutes = minutes + ''
+    while(minutes.length < 2) {
+        minutes = '0' + minutes
+    }
+
+    return `${hours}:${minutes}`
+}
+
 // from colorbrewer2.org
-var COLORS = ['#8dd3c7','#ffffb3','#bebada','#fb8072','#80b1d3','#fdb462',
-              '#b3de69','#fccde5','#d9d9d9','#bc80bd','#ccebc5','#ffed6f'];
+// const COLORS = ['#8dd3c7','#ffffb3','#bebada','#fb8072','#80b1d3','#fdb462',
+//               '#b3de69','#fccde5','#d9d9d9','#bc80bd','#ccebc5','#ffed6f'];
+
+const COLORS = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f','#e5c494','#b3b3b3']
 
 class Section extends Component {
     render() {
@@ -28,8 +42,6 @@ class Section extends Component {
               {courseTitle}
               <br/>
               {sectionTitle}
-              <br/>
-              {section["Start Time"]} to {section["End Time"]}
             </div>
         )
     }
@@ -67,6 +79,38 @@ class CalendarDayColumn extends Component {
               </div>
             </div>
         );
+    }
+}
+
+class CalendarTimeColumn extends Component {
+    getPercentPosition(minute, props) {
+        return 100 * (minute - props.minMinute) / (props.maxMinute - props.minMinute)
+    }
+
+    render() {
+        let { minMinute, maxMinute } = this.props
+
+        let elements = []
+
+        for(let minute = minMinute; minute <= maxMinute; minute += 60) {
+            const time = minutesToTime(minute)
+            const top = this.getPercentPosition(minute, this.props)
+            elements.push(
+                <div className="CalendarTimeLabel" style={{top: top + '%'}}>
+                  {time}
+                </div>
+            )
+        }
+
+
+        return (
+            <div className="CalendarTimeColumn">
+              <div className="CalendarDayTitle"> </div>
+              <div className="CalendarTimeColumnContent">
+                {elements}
+              </div>
+            </div>
+        )
     }
 }
 
@@ -124,12 +168,17 @@ class Calendar extends Component {
             }
         }
 
+        maxMinute = maxMinute + 32
+
+        minMinute = minMinute - (minMinute % 60)
+        maxMinute = maxMinute - (maxMinute % 60)
+
         let hasSaturday = false
         if(dayElements['S'].length > 0) {
             hasSaturday = true
         }
 
-        let dayColumns = days.map(function(day) {
+        let dayColumns = days.map( (day) => {
             return (
                 <CalendarDayColumn day={day} hasSaturday={hasSaturday}
                                    sections={dayElements[day]}
@@ -140,7 +189,31 @@ class Calendar extends Component {
 
         return (
             <div className="Calendar">
+              <CalendarTimeColumn minMinute={minMinute} maxMinute={maxMinute} />
               {dayColumns}
+            </div>
+        )
+    }
+}
+
+class CalendarPicker extends Component {
+    render() {
+        const { numCalendars, selected } = this.props
+
+        return (
+            <div className="CalendarPicker">
+              Calendar {selected}
+
+              <button href='' onClick={() => {
+                    window.store.dispatch({
+                        type: 'PREV_CALENDAR_INDEX'
+                    })
+                }}> Previous </button>
+              <button onClick={() => {
+                    window.store.dispatch({
+                        type: 'NEXT_CALENDAR_INDEX'
+                    })
+                }}> Next </button>
             </div>
         )
     }
@@ -157,7 +230,7 @@ export class Calendars extends Component {
 
     render() {
         const state = window.store.getState()
-        const { calendars } = state
+        const { calendars, index } = state.calendars
 
         if(calendars.length == 0) {
             return (
@@ -167,10 +240,11 @@ export class Calendars extends Component {
             )
         }
 
-        const calendar = calendars[0]
+        const calendar = calendars[index]
 
         return (
             <div className="Calendars">
+              <CalendarPicker numCalendars={calendars.length} selected={index} />
               <Calendar courses={calendar} />
             </div>
         )

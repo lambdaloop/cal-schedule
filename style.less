@@ -65,26 +65,61 @@ input[type=checkbox]
 
 .Calendar {
     height: 100%;
-}
 
-.CalendarDayColumn {
-    padding-left: 2px;
-    padding-right: 2px;
-    float:left;
-    height: 100%;
-}
+    .CalendarDayColumn {
+        padding-left: 2px;
+        padding-right: 2px;
+        float:left;
+        height: 90%;
+    }
 
-.CalendarDaySections {
-    position: relative;
-    margin-top: 20px;
-    height: 90%;
-    margin-bottom: 50px;
-}
+    .CalendarDaySections {
+        position: relative;
+        margin-top: 20px;
+        height: 90%;
+        margin-bottom: 50px;
+    }
 
-.CalendarDayColumnWithSaturday {
-    width: 14%
-}
+    .CalendarDayColumnWithSaturday {
+        width: 14%;
+    }
 
-.CalendarDayColumnWithoutSaturday {
-    width: 15%
+    .CalendarDayColumnWithoutSaturday {
+        width: 15%;
+    }
+
+    .CalendarDayTitle {
+        height: 1em;
+    }
+
+    .CalendarTimeColumn {
+        float:left;
+        height: 90%;
+        width: 50px;
+        padding-right: 10px;
+    }
+
+    .CalendarTimeColumnContent {
+        margin-top: 20px;
+        width: 100%;
+        height: 90%;
+        position: relative;
+    }
+
+    .CalendarTimeLabel {
+        height: 50px;
+        width: 100%;
+        position: absolute;
+        border-top-style: solid;
+        border-top-color: black;
+        border-top-width: 2px;
+        text-align: left;
+    }
+
+    .Section {
+        width: 100%;
+        border-color: gray;
+        border-style: solid;
+        border-width: 1px;
+    }
 }
