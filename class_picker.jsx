@@ -106,7 +106,7 @@ export class ClassPicker extends Component {
 
     render() {
         const options = this.options
-        var state = window.store.getState()
+        const state = window.store.getState()
 
         return (
             <div className="ClassPicker">
