@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import { storeCookieData } from './session_manager.js'
 
 function sortedComps(comps_in) {
     const comps = comps_in.slice()
@@ -19,6 +20,26 @@ function sortedComps(comps_in) {
 }
 
 export class ClassSection extends Component {
+    constructor(props) {
+        super(props)
+        this.checkItem = this.checkItem.bind(this)
+    }
+
+    checkItem(e) {
+        const target = $(e['target'])
+        const value = target.attr('value')
+
+        const d = this.props.info
+        const key = d['Key']
+
+        window.store.dispatch({
+            type: 'TOGGLE_SECTION',
+            course_id: key,
+            section_id: value
+        })
+        storeCookieData()
+    }
+
     render() {
 
         const sections = this.props.sections
@@ -37,7 +58,7 @@ export class ClassSection extends Component {
                     const out = (
                         <tr key={item["Class Number"]}>
                           <td>
-                            <input type="checkbox" />
+                            <input checked={item["selected"]} value={item["Class Number"]} type="checkbox" onChange={this.checkItem} />
                           </td>
                           <td>{item["Class Number"]}</td>
                           <td>{item["Course Component"]} {item["Section"]}</td>
@@ -55,7 +76,7 @@ export class ClassSection extends Component {
             <table className="ClassSection">
               <tbody>
                 <tr>
-                  <th><input type="checkbox" /></th>
+                  <th></th>
                   <th>CCN</th>
                   <th>Section</th>
                   <th>Days</th>
@@ -70,17 +91,36 @@ export class ClassSection extends Component {
 }
 
 export class ClassDetails extends Component {
+    componentDidMount() {
+        this.unsubscribe = window.store.subscribe(() => this.forceUpdate())
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe()
+    }
+
     render() {
         let course_id = this.props.params.course
         course_id = course_id.replace('-', ' ')
 
-        const data = window.data;
-        const course = data[course_id]
+        const state = window.store.getState()
+        const possible_courses = state.courses.picked.filter(c => c.id == course_id)
+
+        if(possible_courses.length != 1) {
+            // shouldn't be here
+            window.location = '#/'
+            return (
+                <div className="ClassDetails">
+                </div>
+            )
+        }
+
+        const course = possible_courses[0]['course']['data']
 
         return (
             <div className="ClassDetails">
               <div>{course_id}</div>
-              <ClassSection sections={course['sections']} />
+              <ClassSection sections={course['sections']} info={course['info']} />
             </div>
         )
     }

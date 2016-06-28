@@ -15,14 +15,6 @@ class ClassList extends Component {
         this.removeItem = this.removeItem.bind(this)
     }
 
-    componentDidMount() {
-        this.unsubscribe = window.store.subscribe(() => this.forceUpdate())
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe()
-    }
-
     checkItem(e) {
         const target = $(e['target'])
         const value = target.attr('value')
