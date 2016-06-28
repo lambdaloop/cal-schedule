@@ -202,7 +202,8 @@ class CalendarPicker extends Component {
 
         return (
             <div className="CalendarPicker">
-              Calendar {selected}
+              Calendar {selected+1}/{numCalendars}
+              <br/>
 
               <button href='' onClick={() => {
                     window.store.dispatch({
@@ -250,3 +251,28 @@ export class Calendars extends Component {
         )
     }
 }
+
+$(document).keydown(function(e) {
+    switch(e.which) {
+    case 37: // left
+        window.store.dispatch({
+            type: 'PREV_CALENDAR_INDEX'
+        })
+        break;
+
+    case 39: // right
+        window.store.dispatch({
+            type: 'NEXT_CALENDAR_INDEX'
+        })
+        break;
+
+    case 38: // up
+        break;
+
+    case 40: // down
+        break;
+
+    default: return; // exit this handler for other keys
+    }
+    e.preventDefault(); // prevent the default action (scroll / move caret)
+});
