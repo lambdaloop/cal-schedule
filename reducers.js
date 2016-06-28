@@ -1,10 +1,9 @@
-import 'babel-polyfill'
-
 import { combineReducers } from 'redux'
+import objectAssignDeep from 'object-assign-deep'
 
 
 function selectSections(course, section_id) {
-    let out = Object.assign({}, course)
+    let out = objectAssignDeep({}, course)
     let sections = out.data.sections
     for(const key in sections) {
         let section_types = sections[key]
@@ -16,7 +15,7 @@ function selectSections(course, section_id) {
             }
         }
     }
-    return course
+    return out
 }
 
 function course(state = {}, action) {
@@ -31,7 +30,7 @@ function course(state = {}, action) {
         if(state.id !== action.id) {
             return state
         } else {
-            let newState = Object.assign({}, state, {
+            let newState = objectAssignDeep({}, state, {
                 selected: !state.selected
             })
             return newState
@@ -57,7 +56,7 @@ function courses(state = {picked: [], ids: {}}, action) {
         if(state.ids[action.id]) {
             return state;
         } else {
-            let ids = Object.assign({}, state.ids)
+            let ids = objectAssignDeep({}, state.ids)
             ids[action.id] = true
 
             return {
@@ -71,7 +70,7 @@ function courses(state = {picked: [], ids: {}}, action) {
             ids: state.ids
         }
     case 'REMOVE_COURSE':
-        let ids = Object.assign({}, state.ids)
+        let ids = objectAssignDeep({}, state.ids)
         delete ids[action.id]
         
         return {
@@ -97,15 +96,15 @@ function calendars(state = {calendars: [], index: undefined}, action) {
             index: 0
         }
     case 'NEXT_CALENDAR_INDEX':
-        return Object.assign({}, state, {
+        return objectAssignDeep({}, state, {
             index: Math.min(state.index + 1, state.calendars.length - 1)
         })
     case 'PREV_CALENDAR_INDEX':
-        return Object.assign({}, state, {
+        return objectAssignDeep({}, state, {
             index: Math.max(state.index - 1, 0)
         })
     case 'SET_CALENDAR_INDEX':
-        return Object.assign({}, state, {
+        return objectAssignDeep({}, state, {
             index: action.index
         })
     default:
