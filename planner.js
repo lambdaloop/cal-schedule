@@ -1,4 +1,4 @@
-var Queue = require('./Queue.js');
+import Queue from './Queue.js';
 
 /*
  This should plan the schedules, given some candidate classes.
@@ -12,8 +12,8 @@ var Queue = require('./Queue.js');
  */
 function intersect_safe(a, b)
 {
-    var ai=0, bi=0;
-    var result = [];
+    var ai=0, bi=0
+    var result = []
 
     while( ai < a.length && bi < b.length )
     {
@@ -21,40 +21,40 @@ function intersect_safe(a, b)
         else if (a[ai] > b[bi] ){ bi++; }
         else /* they're equal */
         {
-            result.push(a[ai]);
-            ai++;
-            bi++;
+            result.push(a[ai])
+            ai++
+            bi++
         }
     }
 
-    return result;
+    return result
 }
 
 function timeToMinutes(time) {
-    var s = time.split(':');
-    return parseInt(s[0]) * 60 + parseInt(s[1]);
+    var s = time.split(':')
+    return parseInt(s[0]) * 60 + parseInt(s[1])
 }
 
 
 function ScheduleTime(days, startTime, endTime) {
-    this.days = days.split("").slice();
-    this.days.sort();
+    this.days = days.split("").slice()
+    this.days.sort()
 
-    this.startTime = timeToMinutes(startTime);
-    this.endTime = timeToMinutes(endTime);
+    this.startTime = timeToMinutes(startTime)
+    this.endTime = timeToMinutes(endTime)
 
     this.overlaps = function(b) {
-        var days = intersect_safe(this.days, b.days);
+        var days = intersect_safe(this.days, b.days)
         if(days.length == 0) {
-            return false;
+            return false
         } else {
-            return (this.startTime <= b.endTime) && (b.startTime <= this.endTime);
+            return (this.startTime <= b.endTime) && (b.startTime <= this.endTime)
         }
-    };
+    }
 }
 
 function schedulesOverlap(a, b) {
-    return a.overlaps(b);
+    return a.overlaps(b)
 }
 
 // constraints
@@ -64,29 +64,29 @@ function schedulesOverlap(a, b) {
 
 function addScheduleTime(sections) {
     for(var section in sections) {
-        var components = sections[section];
+        var components = sections[section]
         for(var comp in components) {
-            var rows = components[comp];
+            var rows = components[comp]
             for(var i = 0; i < rows.length; i += 1) {
-                var row = rows[i];
-                row['ScheduleTime'] = new ScheduleTime(row['Meeting Days'], row['Start Time'], row['End Time']);
-                rows[i] = row;
+                var row = rows[i]
+                row['ScheduleTime'] = new ScheduleTime(row['Meeting Days'], row['Start Time'], row['End Time'])
+                rows[i] = row
             }
         }
     }
-    return sections;
+    return sections
 }
 
 function classSections(classes) {
-    var out = [];
+    var out = []
 
     for(var i = 0; i < classes.length; i += 1) {
-        var sections = classes[i]['data']['sections'];
-        sections = addScheduleTime(sections);
-        out.push(sections);
+        var sections = classes[i]['data']['sections']
+        sections = addScheduleTime(sections)
+        out.push(sections)
     }
 
-    return out;
+    return out
 }
 
 // picked = [[c1, c2], [c3, c4], ...]
@@ -94,110 +94,106 @@ function classSections(classes) {
 
 function checkOverlap(stime, picked, items) {
     for(var i = 0; i < items.length; i += 1) {
-        var item = items[i];
+        var item = items[i]
         if(item['ScheduleTime'].overlaps(stime)) {
-            return true;
+            return true
         }
     }
     for(var i = 0; i < picked.length; i += 1) {
         for(var j = 0; j < picked[i].length; j += 1) {
-            var item = picked[i][j];
+            var item = picked[i][j]
             if(item['ScheduleTime'].overlaps(stime)) {
-                return true;
+                return true
             }
         }
     }
 
-    return false;
+    return false
 }
 
 function possibleCombos(sections, picked) {
     // all possible combinations of classes
     // lists possibilities, given picked so far (exclude overlapping times)
-    var possible = [];
+    var possible = []
 
     for(var section in sections) {
-        var components = sections[section];
-        var keys = Object.keys(components);
+        var components = sections[section]
+        var keys = Object.keys(components)
 
         // state is picked, key_ix
 
-        var q = new Queue();
-        q.enqueue([[], 0]);
+        var q = new Queue()
+        q.enqueue([[], 0])
 
 
         while(!q.isEmpty()) {
-            var state = q.dequeue();
-            var items = state[0];
-            var key_ix = state[1];
+            var state = q.dequeue()
+            var items = state[0]
+            var key_ix = state[1]
 
             if(key_ix >= keys.length) {
-                possible.push(items);
-                continue;
+                possible.push(items)
+                continue
             }
 
-            var comp = keys[key_ix];
-            var rows = components[comp];
+            var comp = keys[key_ix]
+            var rows = components[comp]
 
             for(var i = 0; i < rows.length; i += 1) {
-                var row = rows[i];
+                var row = rows[i]
                 if(!checkOverlap(row['ScheduleTime'], picked, items)) {
-                    var items_new = items.slice();
-                    items_new.push(row);
-                    var state_new = [items_new, key_ix + 1];
-                    q.enqueue(state_new);
+                    var items_new = items.slice()
+                    items_new.push(row)
+                    var state_new = [items_new, key_ix + 1]
+                    q.enqueue(state_new)
                 }
             }
 
         }
     }
 
-    return possible;
+    return possible
 }
 
 function proposePossible(classes) {
     if(classes.length == 0) {
-        return [];
+        return []
     }
 
     // state is (picked, next_index)
 
-    var possible = [];
+    var possible = []
 
-    var q = new Queue();
+    var q = new Queue()
 
-    var state = [[], 0];
-    q.enqueue(state);
+    var state = [[], 0]
+    q.enqueue(state)
 
     while(!q.isEmpty()) {
-        state = q.dequeue();
-        var picked = state[0].slice();
-        var ix = state[1];
+        state = q.dequeue()
+        var picked = state[0].slice()
+        var ix = state[1]
         if(ix >= classes.length) {
-            possible.push(picked);
-            continue;
+            possible.push(picked)
+            continue
         }
 
-        var sections = classes[ix];
-        var combos = possibleCombos(sections, picked);
+        var sections = classes[ix]
+        var combos = possibleCombos(sections, picked)
 
         for(var i = 0; i < combos.length; i += 1) {
-            var combo = combos[i];
-            var picked_new = picked.slice();
-            picked_new.push(combo);
-            var state_new = [picked_new, ix+1];
-            q.enqueue(state_new);
+            var combo = combos[i]
+            var picked_new = picked.slice()
+            picked_new.push(combo)
+            var state_new = [picked_new, ix+1]
+            q.enqueue(state_new)
         }
     }
 
-    return possible;
+    return possible
 }
 
-function possibleCalendars(classes) {
-    var csections = classSections(classes);
-    return proposePossible(csections);
+export function possibleCalendars(classes) {
+    var csections = classSections(classes)
+    return proposePossible(csections)
 }
-
-module.exports = {
-    possibleCalendars: possibleCalendars
-};
