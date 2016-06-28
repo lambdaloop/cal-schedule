@@ -2,7 +2,7 @@
 
 import json
 
-with open('data/schedule.json', 'r') as f:
+with open('data/schedule_new.json', 'r') as f:
     schedule = json.load(f)
 
 header = schedule['header']
@@ -128,6 +128,6 @@ for key, rows in classes.items():
     classes_sections[key]['info'] = rows[0]
     classes_sections[key]['sections'] = sections
 
-with open('data/schedule-grouped.json', 'w') as f:
+with open('data/schedule_grouped.json', 'w') as f:
     json.dump(classes_sections, f, sort_keys=True)
 
