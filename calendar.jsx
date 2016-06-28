@@ -68,7 +68,9 @@ class CalendarDayColumn extends Component {
             const bottom = this.getPercentPosition(section["End Time"], this.props)
             const height = bottom - top
 
-            return <Section section={section} top={top} height={height} />
+            const title = section['Class Number']
+
+            return <Section key={title} section={section} top={top} height={height} />
         })
 
         return (
@@ -96,7 +98,7 @@ class CalendarTimeColumn extends Component {
             const time = minutesToTime(minute)
             const top = this.getPercentPosition(minute, this.props)
             elements.push(
-                <div className="CalendarTimeLabel" style={{top: top + '%'}}>
+                <div className="CalendarTimeLabel" key={time} style={{top: top + '%'}}>
                   {time}
                 </div>
             )
@@ -180,7 +182,7 @@ class Calendar extends Component {
 
         let dayColumns = days.map( (day) => {
             return (
-                <CalendarDayColumn day={day} hasSaturday={hasSaturday}
+                <CalendarDayColumn key={day} day={day} hasSaturday={hasSaturday}
                                    sections={dayElements[day]}
                                    minMinute={minMinute} maxMinute={maxMinute}
                                    />

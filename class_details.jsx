@@ -78,7 +78,7 @@ export class ClassDetails extends Component {
         const course = data[course_id]
 
         return (
-            <div>
+            <div className="ClassDetails">
               <div>{course_id}</div>
               <ClassSection sections={course['sections']} />
             </div>
