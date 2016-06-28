@@ -6,12 +6,12 @@ import { createStore } from 'redux'
 
 require('./style.less')
 
-
 import { possibleCalendars } from './planner.js'
 import { ClassDetails } from './class_details.jsx'
 import { ClassPicker } from './class_picker.jsx'
 import { Calendars } from './calendar.jsx'
 import { reducer } from './reducers.js'
+import { loadCookieData } from './session_manager.js'
 
 var DATA = null
 
@@ -45,6 +45,7 @@ store.subscribe(() => {
     console.log('state')
     console.log(store.getState())
 })
+
 
 class Home extends Component {
     render() {
@@ -91,7 +92,7 @@ class App extends Component {
 
 /* ReactDOM.render(<App/>, document.getElementById('app')); */
 
-const render = () => {
+function render() {
     ReactDOM.render((
         <Router history={hashHistory}>
           <Route path="/" component={App}>
@@ -107,5 +108,8 @@ const render = () => {
 $(document).ready(() => {
     window.location = '#/'
     window.store = store
-    fetchData(render);
+    fetchData(() => {
+        loadCookieData()
+        render()
+    });
 })

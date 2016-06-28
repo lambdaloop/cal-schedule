@@ -6,10 +6,13 @@ require('react-virtualized/styles.css')
 require('react-select/dist/react-select.css')
 require('react-virtualized-select/styles.css')
 
+import { storeCookieData } from './session_manager.js'
+
 class ClassList extends Component {
     constructor(props) {
         super(props)
         this.checkItem = this.checkItem.bind(this)
+        this.removeItem = this.removeItem.bind(this)
     }
 
     componentDidMount() {
@@ -28,6 +31,19 @@ class ClassList extends Component {
             type: 'TOGGLE_COURSE',
             id: value
         })
+        storeCookieData()
+    }
+
+    removeItem(e) {
+        const target = $(e['target'])
+        const value = target.attr('name')
+        console.log(value)
+        
+        window.store.dispatch({
+            type: 'REMOVE_COURSE',
+            id: value
+        })
+        storeCookieData()
     }
 
     render() {
@@ -45,6 +61,7 @@ class ClassList extends Component {
                   <input type="checkbox" value={value}
                          checked={checked} onChange={this.checkItem}/>
                   <span>{title} -- {name}</span> <Link to={url}>(sections)</Link>
+                  <span className="ClassX" onClick={this.removeItem} name={value}> x </span>
                 </div>
             )
         })
@@ -88,6 +105,7 @@ export class ClassPicker extends Component {
             course: val,
             id: val['value']
         })
+        storeCookieData()
     }
 
     updateOptions(data) {

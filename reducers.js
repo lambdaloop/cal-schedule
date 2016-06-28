@@ -9,7 +9,7 @@ function course(state = {}, action) {
         return {
             course: action.course,
             id: action.id,
-            selected: true
+            selected: (action.selected === undefined ? true : action.selected)
         }
     case 'TOGGLE_COURSE':
         if(state.id !== action.id) {
@@ -31,8 +31,8 @@ function courses(state = {picked: [], ids: {}}, action) {
         if(state.ids[action.id]) {
             return state;
         } else {
-            let ids = Object.assign({}, state.ids);
-            ids[action.id] = true;
+            let ids = Object.assign({}, state.ids)
+            ids[action.id] = true
 
             return {
                 picked: state.picked.concat([ course(undefined, action) ]),
@@ -44,6 +44,15 @@ function courses(state = {picked: [], ids: {}}, action) {
             picked: state.picked.map( c => course(c, action) ),
             ids: state.ids
         }
+    case 'REMOVE_COURSE':
+        let ids = Object.assign({}, state.ids)
+        delete ids[action.id]
+        
+        return {
+            picked: state.picked.filter( c => c.id != action.id ),
+            ids: ids
+        }
+        
     default:
         return state
     }
