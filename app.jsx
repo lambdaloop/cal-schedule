@@ -3,6 +3,7 @@ import ReactDOM from "react-dom"
 import { Router, Route, IndexRoute, Link } from "react-router"
 import { hashHistory } from "react-router"
 import { createStore } from 'redux'
+import objectAssignDeep from 'object-assign-deep'
 
 require('./style.less')
 
@@ -53,12 +54,25 @@ class Home extends Component {
     }
 }
 
+function filterSections(course) {
+    let out = objectAssignDeep({}, course)
+    let sections = out.data.sections
+
+    for(const key in sections) {
+        let section_types = sections[key]
+        for(let section_type in section_types) {
+            section_types[section_type] = section_types[section_type].filter( s => s.selected)
+        }
+    }
+    return out
+}
+
 export function getPickedItems() {
     let courses = window.store.getState().courses.picked
     return courses.filter(function(item) {
         return item['selected']
     }).map(function(item) {
-        return item['course']
+        return filterSections(item['course'])
     })
 }
 
