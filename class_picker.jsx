@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { Link } from "react-router"
 
-import {default as Select} from 'react-virtualized-select'
+import Select from 'react-virtualized-select'
 require('react-virtualized/styles.css')
 require('react-select/dist/react-select.css')
 require('react-virtualized-select/styles.css')
