@@ -20,6 +20,10 @@ export function loadCookieData() {
             selected: c.selected
         })
 
+        if(!c.unselectedSections) {
+            continue;
+        }
+
         for(const section_id of c.unselectedSections) {
             window.store.dispatch({
                 type: 'TOGGLE_SECTION',
