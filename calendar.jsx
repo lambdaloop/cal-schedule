@@ -47,6 +47,15 @@ class Section extends Component {
     }
 }
 
+const DAY_TITLE_MAP = {
+    'M': 'Mon',
+    'T': 'Tue',
+    'W': 'Wed',
+    'R': 'Thu',
+    'F': 'Fri',
+    'S': 'Sat'
+}
+
 class CalendarDayColumn extends Component {
     getPercentPosition(time, props) {
         let minute = timeToMinutes(time)
@@ -73,9 +82,11 @@ class CalendarDayColumn extends Component {
             return <Section key={title} section={section} top={top} height={height} />
         })
 
+        const dayTitle = DAY_TITLE_MAP[this.props.day]
+
         return (
             <div className={"CalendarDayColumn " + saturdayClass} >
-              <div className="CalendarDayTitle"> {this.props.day} </div>
+              <div className="CalendarDayTitle"> {dayTitle} </div>
               <div className="CalendarDaySections">
                 {courseElements}
               </div>
@@ -204,19 +215,21 @@ class CalendarPicker extends Component {
 
         return (
             <div className="CalendarPicker">
-              Calendar {selected+1}/{numCalendars}
-              <br/>
-
-              <button href='' onClick={() => {
-                    window.store.dispatch({
-                        type: 'PREV_CALENDAR_INDEX'
-                    })
-                }}> Previous </button>
-              <button onClick={() => {
-                    window.store.dispatch({
-                        type: 'NEXT_CALENDAR_INDEX'
-                    })
-                }}> Next </button>
+              <div className="CalendarNumber">
+                Calendar {selected+1}/{numCalendars}
+              </div>
+              <div className="CalendarButtons">
+                <span className="btn" onClick={() => {
+                      window.store.dispatch({
+                          type: 'PREV_CALENDAR_INDEX'
+                      })
+                  }}> Previous </span>
+                <span className="btn" onClick={() => {
+                      window.store.dispatch({
+                          type: 'NEXT_CALENDAR_INDEX'
+                      })
+                  }}> Next </span>
+              </div>
             </div>
         )
     }

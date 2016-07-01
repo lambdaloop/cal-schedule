@@ -8,7 +8,7 @@ body {
 
     margin-left: 30px;
     margin-right: 30px;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .Hidden {
@@ -20,12 +20,10 @@ body {
 }
 
 .btn {
-    -webkit-border-radius: 4;
-    -moz-border-radius: 4;
-    border-radius: 4px;
+    border-radius: 2px;
     color: #ffffff;
     background: #3498db;
-    padding: 6px;
+    padding: 4px;
     text-decoration: none;
     text-align: center;
 
@@ -34,6 +32,14 @@ body {
     width: intrinsic;           /* Safari/WebKit uses a non-standard name */
     width: -moz-max-content;    /* Firefox/Gecko */
     width: -webkit-max-content; /* Chrome */
+
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
 
     &:hover {
         background: #3cb0fd;
@@ -88,6 +94,24 @@ body {
     th, td {
         padding: 8px;
         text-align: right;
+
+    }
+
+
+    tr {
+        border-bottom-style: solid;
+        border-bottom-color: black;
+        border-bottom-width: 1px;
+
+        &.HeaderRow {
+            border-top-style: solid;
+            border-top-color: black;
+            border-top-width: 1px;
+        }
+    }
+
+    .TimeColumn {
+        min-width: 100px;
     }
 
     // tr:nth-child(even){
@@ -124,6 +148,26 @@ input[type=checkbox]
 
 .Calendars {
     height: 100%;
+}
+
+.CalendarPicker {
+    margin-bottom: 10px;
+
+    .CalendarNumber {
+        height: 1.2em;
+        font-size: 16px;
+    }
+
+    .CalendarButtons {
+        margin-top: 5px;
+        margin-bottom: 5px;
+
+        .btn {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+    }
 }
 
 .Calendar {

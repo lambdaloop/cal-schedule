@@ -63,7 +63,7 @@ export class ClassSection extends Component {
                           <td>{item["Class Number"]}</td>
                           <td>{item["Course Component"]} {item["Section"]}</td>
                           <td>{item["Meeting Days"]}</td>
-                          <td>{item["Start Time"]} -- {item["End Time"]}</td>
+                          <td className="TimeColumn">{item["Start Time"]} &mdash; {item["End Time"]}</td>
                           <td>{item["Instructor Name"]}</td>
                         </tr>
                     )
@@ -75,12 +75,12 @@ export class ClassSection extends Component {
         return (
             <table className="ClassSection">
               <tbody>
-                <tr>
+                <tr className="HeaderRow">
                   <th></th>
                   <th>CCN</th>
                   <th>Section</th>
                   <th>Days</th>
-                  <th>Time</th>
+                  <th className="TimeColumn">Time</th>
                   <th>Instructor</th>
                 </tr>
                 {rows}
