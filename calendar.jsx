@@ -39,9 +39,12 @@ class Section extends Component {
                      height: this.props.height + "%",
                      position: "absolute"
                  }}>
-              {courseTitle}
-              <br/>
-              {sectionTitle}
+              <div className="CourseTitle">
+                {courseTitle}
+              </div>
+              <div className="SectionTitle">
+                {sectionTitle}
+              </div>
             </div>
         )
     }
