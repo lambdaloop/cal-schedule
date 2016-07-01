@@ -21,7 +21,8 @@ function minutesToTime(total_minutes) {
 // const COLORS = ['#8dd3c7','#ffffb3','#bebada','#fb8072','#80b1d3','#fdb462',
 //               '#b3de69','#fccde5','#d9d9d9','#bc80bd','#ccebc5','#ffed6f'];
 
-const COLORS = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f','#e5c494','#b3b3b3']
+const COLORS_BORDER = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f','#e5c494','#b3b3b3']
+const COLORS = ['#b3e2cd','#fdcdac','#cbd5e8','#f4cae4','#e6f5c9','#fff2ae','#f1e2cc','#cccccc']
 
 class Section extends Component {
     render() {
@@ -29,21 +30,20 @@ class Section extends Component {
 
         const courseTitle = `${section['Subject']} ${section['Catalog Number']}`
         const sectionTitle = `${section["Course Component"]} ${section["Section"]}`
-
+        const facilityTitle = section['Facility']
 
         return (
             <div className="Section"
                  style={{
                      backgroundColor: section['Color'],
+                     borderColor: section['BorderColor'],
                      top: this.props.top + "%",
                      height: this.props.height + "%",
                      position: "absolute"
                  }}>
-              <div className="CourseTitle">
-                {courseTitle}
-              </div>
-              <div className="SectionTitle">
-                {sectionTitle}
+              <span className="CourseTitle"> {courseTitle} {sectionTitle}</span>
+              <div className="FacilityTitle">
+                {facilityTitle}
               </div>
             </div>
         )
@@ -139,10 +139,12 @@ class Calendar extends Component {
 
         for(let course of courses) {
             const color = COLORS[index % COLORS.length]
+            const borderColor = COLORS_BORDER[index % COLORS.length]
 
             for(let section of course) {
                 section['Index'] = index
                 section['Color'] = color
+                section['BorderColor'] = borderColor
                 out.push(section)
             }
 
