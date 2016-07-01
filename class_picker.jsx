@@ -50,17 +50,20 @@ class ClassList extends Component {
 
             return (
                 <div key={value}>
-                  <input type="checkbox" value={value}
+                  <input className="CheckClass"
+                         type="checkbox" value={value}
                          checked={checked} onChange={this.checkItem}/>
-                  <span>{title} -- {name}</span> <Link to={url}>(sections)</Link>
-                  <span className="ClassX" onClick={this.removeItem} name={value}> x </span>
+                  <span className="ClassTitle">
+                    <span>{title} &mdash; {name}</span> <Link to={url}>(sections)</Link>
+                    <span className="ClassX" onClick={this.removeItem} name={value}> x </span>
+                  </span>
                 </div>
             )
         })
 
         return (
             <div className="ClassList">
-              <div> Classes </div>
+              <div className="ClassListHeader"> Classes </div>
               <div>
                 {items}
               </div>
@@ -123,9 +126,10 @@ export class ClassPicker extends Component {
               <Select value={undefined}
                       options={options}
                       onChange={this.onChange}
+                      className="ClassSelect"
                       />
               <ClassList items={state.courses.picked}  />
-              <button id="generate" type="button">Generate schedules!</button>
+              <div className="btn" id="generate">Generate schedules!</div>
             </div>
         )
     }
