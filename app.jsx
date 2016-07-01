@@ -62,6 +62,12 @@ function filterSections(course) {
         let section_types = sections[key]
         for(let section_type in section_types) {
             section_types[section_type] = section_types[section_type].filter( s => s.selected)
+            if(section_types[section_type].length == 0) {
+                delete section_types[section_type]
+            }
+        }
+        if(Object.keys(sections[key]).length == 0) {
+            delete sections[key]
         }
     }
     return out
@@ -69,9 +75,9 @@ function filterSections(course) {
 
 export function getPickedItems() {
     let courses = window.store.getState().courses.picked
-    return courses.filter(function(item) {
+    return courses.filter(item => {
         return item['selected']
-    }).map(function(item) {
+    }).map(item => {
         return filterSections(item['course'])
     })
 }
