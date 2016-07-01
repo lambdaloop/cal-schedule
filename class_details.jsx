@@ -116,10 +116,12 @@ export class ClassDetails extends Component {
         }
 
         const course = possible_courses[0]['course']['data']
+        const info = course['info']
+
 
         return (
             <div className="ClassDetails">
-              <div>{course_id}</div>
+              <div className="ClassTitle">{course_id} &mdash; {info['Course Title']}</div>
               <ClassSection sections={course['sections']} info={course['info']} />
             </div>
         )
