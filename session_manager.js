@@ -32,7 +32,6 @@ export function loadCookieData() {
             })
         }
     }
-    // console.log(JSON.parse(courses))
 }
 
 function getUnselectedSections(course) {
@@ -63,10 +62,7 @@ export function storeCookieData() {
         unselectedSections: getUnselectedSections(course.course)
     } } )
 
-    console.log(out)
-
     const str = JSON.stringify(out)
-    console.log(str)
 
     Cookies.set('courses', str, { expires: 365, path: '' });
 }
