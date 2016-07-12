@@ -41,6 +41,7 @@ This is what I ran when developing:
 ``` shell
 webpack-dev-server --progress --colors --output-public-path=build
 ```
+Once you've compiled the sources, you open the app by opening `index.html` in the browser of your choice.
 
 ### Deployment
 
