@@ -51,3 +51,9 @@ So I just run `bash deploy.sh` to deploy the latest code online.
 ## Contributing
 
 I welcome pull requests! If you make one, I only ask you to try to use the latest ES6 syntax, and to avoid semicolons.
+
+## Thanks
+
+Thanks to Ronald Kwan who built a schedule searcher from the same PDFs some time ago:
+http://rkwan.gitlab.io/cal-schedule/
+This inspired me to build my own website as well (with the same name because it was good).
