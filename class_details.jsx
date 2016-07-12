@@ -1,5 +1,6 @@
 import React, { Component } from "react"
 import { storeCookieData } from './session_manager.js'
+import { fetchEnrollment } from './enrollment.js'
 
 function sortedComps(comps_in) {
     const comps = comps_in.slice()
@@ -118,6 +119,9 @@ export class ClassDetails extends Component {
         const course = possible_courses[0]['course']['data']
         const info = course['info']
 
+        if(!course.fetched) {
+            fetchEnrollment(course)
+        }
 
         return (
             <div className="ClassDetails">
