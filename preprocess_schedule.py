@@ -5,6 +5,9 @@ import json
 with open('data/schedule_new.json', 'r') as f:
     schedule = json.load(f)
 
+with open('data/berkeley_time_ids.json', 'r') as f:
+    btime_ids = json.load(f)
+    
 header = schedule['header']
 data = schedule['data']
 
@@ -27,6 +30,10 @@ for row in data_d:
     key = '{} {}'.format(row['Subject'], row['Catalog Number'])
 
     row['Key'] = key
+    row['Berkeleytime'] = btime_ids.get(key)
+
+    if key not in btime_ids:
+        print(key)
 
     if key not in classes:
         classes[key] = []
