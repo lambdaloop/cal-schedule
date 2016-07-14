@@ -25,6 +25,17 @@ for row in data_d:
     if row['Course Component'] == 'GRP':
         continue
 
+    try:
+        start = float(row['Start Time'])
+        end = float(row['End Time'])
+
+        start = round(start * 24 * 4) / 4
+        end = round(end * 24 * 4) / 4
+
+        row['Start Time'] = '{}:{:02d}'.format(int(start), int((start % 1) * 60))
+        row['End Time'] = '{}:{:02d}'.format(int(end), int((end % 1) * 60))
+    except ValueError:
+        pass
     # key = (row['Subject'], row['Catalog Number'], row['Course Title'])
     # key = (row['Subject'], row['Catalog Number'])
     key = '{} {}'.format(row['Subject'], row['Catalog Number'])
