@@ -95,5 +95,3 @@ export function fetchEnrollment(course) {
         })
 
 }
-
-q
