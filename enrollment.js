@@ -16,7 +16,7 @@ function fetchSectionIDs(bid, callback) {
         return null
     }
     console.log(bid)
-    
+
     const url = "http://www.berkeleytime.com/enrollment/sections/" + bid + '/'
     $.ajax({
         url: url,
@@ -36,29 +36,64 @@ function fetchSectionIDs(bid, callback) {
 
 const SERVER_URL = 'https://calplanner.herokuapp.com'
 
+let COURSES_FETCHING = {}
+
 export function fetchEnrollment(course) {
     const bid = course.info.Berkeleytime
-    if(!bid) {
+    if(!bid || COURSES_FETCHING[bid]) {
         return
     }
-    
+
+    COURSES_FETCHING[bid] = true
+
     $.get(SERVER_URL + '/section_ids?course_id=' + bid)
-    
-    fetchSectionIDs(course.info.Berkeleytime, (enrollment) => {
-        console.log(sectionIDs)
-        if(!sectionIDs) {
-            return
-        }
-        
-        let sections = course.sections
-        for(const key in sections) {
-            let section_types = sections[key]
-            for(let section_type in section_types) {
-                for(let section of section_types[section_type]) {
-                    console.log(section)
+        .done(data => {
+            console.log(data)
+
+            if(data.status != 'success') {
+                return
+            }
+
+            const sectionIDs = data.data
+            if(!sectionIDs) {
+                return
+            }
+
+            let sections = course.sections
+            for(const key in sections) {
+                let section_types = sections[key]
+                for(let section_type in section_types) {
+                    for(let section of section_types[section_type]) {
+                        if(section.enrollment) {
+                            continue
+                        }
+
+                        if(sectionIDs[section.Section]) {
+
+                            $.get(SERVER_URL + '/section_enrollment?section_id=' + sectionIDs[section.Section])
+                                .done(data => {
+                                    if(data.status == 'success') {
+                                        window.store.dispatch({
+                                            type: 'ENROLLMENT_SECTION',
+                                            section_id: section['Class Number'],
+                                            course_id: section['Key'],
+                                            enrollment: data.data
+                                        })
+                                    }
+                                })
+                        } else {
+                            window.store.dispatch({
+                                type: 'ENROLLMENT_SECTION',
+                                section_id: section['Class Number'],
+                                course_id: section['Key'],
+                                enrollment: 'none'
+                            })
+                        }
+                    }
                 }
             }
-        }
-    })
+        })
+
 }
 
+q

@@ -56,6 +56,15 @@ export class ClassSection extends Component {
             for(let i = 0; i < comps.length; i += 1) {
                 const comp = comps[i]
                 section[comp].map(item => {
+                    let enrollment = item.enrollment
+                    let enrolled = '...'
+                    let waitlist = ''
+                    if(enrollment == 'none') {
+                        enrolled = ''
+                    } else if(enrollment) {
+                        enrolled = `${enrollment.enrolled}/${enrollment.enrolled_max}`
+                        waitlist = enrollment.waitlisted
+                    }
                     const out = (
                         <tr key={item["Class Number"]}>
                           <td>
@@ -66,6 +75,8 @@ export class ClassSection extends Component {
                           <td>{item["Meeting Days"]}</td>
                           <td className="TimeColumn">{item["Start Time"]} &mdash; {item["End Time"]}</td>
                           <td>{item["Instructor Name"]}</td>
+                          <td>{enrolled}</td>
+                          <td>{waitlist}</td>
                         </tr>
                     )
                     rows.push(out)
@@ -83,6 +94,8 @@ export class ClassSection extends Component {
                   <th>Days</th>
                   <th className="TimeColumn">Time</th>
                   <th>Instructor</th>
+                  <th>Enrolled</th>
+                  <th>Waitlist</th>
                 </tr>
                 {rows}
               </tbody>
@@ -119,9 +132,7 @@ export class ClassDetails extends Component {
         const course = possible_courses[0]['course']['data']
         const info = course['info']
 
-        if(!course.fetched) {
-            fetchEnrollment(course)
-        }
+        fetchEnrollment(course)
 
         return (
             <div className="ClassDetails">

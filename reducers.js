@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 import objectAssignDeep from 'object-assign-deep'
+import objectAssign from 'object-assign-deep'
 
 
 function selectSections(course, section_id) {
@@ -11,6 +12,22 @@ function selectSections(course, section_id) {
             for(let section of section_types[section_type]) {
                 if(section_id === undefined || section['Class Number'] == section_id ) {
                     section.selected = !section.selected
+                }
+            }
+        }
+    }
+    return out
+}
+
+function setEnrollmentSection(course, section_id, enrollment) {
+    let out = objectAssignDeep({}, course)
+    let sections = out.data.sections
+    for(const key in sections) {
+        let section_types = sections[key]
+        for(let section_type in section_types) {
+            for(let section of section_types[section_type]) {
+                if(section['Class Number'] == section_id ) {
+                    section.enrollment = enrollment
                 }
             }
         }
@@ -30,10 +47,9 @@ function course(state = {}, action) {
         if(state.id !== action.id) {
             return state
         } else {
-            let newState = objectAssignDeep({}, state, {
+            return objectAssign({}, state, {
                 selected: !state.selected
             })
-            return newState
         }
     case 'TOGGLE_SECTION':
         if(state.id !== action.course_id) {
@@ -41,6 +57,16 @@ function course(state = {}, action) {
         } else {
             return {
                 course: selectSections(state.course, action.section_id),
+                id: state.id,
+                selected: state.selected
+            }
+        }
+    case 'ENROLLMENT_SECTION':
+        if(state.id !== action.course_id) {
+            return state
+        } else {
+            return {
+                course: setEnrollmentSection(state.course, action.section_id, action.enrollment),
                 id: state.id,
                 selected: state.selected
             }
@@ -65,6 +91,11 @@ function courses(state = {picked: [], ids: {}}, action) {
             }
         }
     case 'TOGGLE_COURSE':
+        return {
+            picked: state.picked.map( c => course(c, action) ),
+            ids: state.ids
+        }
+    case 'ENROLLMENT_SECTION':
         return {
             picked: state.picked.map( c => course(c, action) ),
             ids: state.ids
