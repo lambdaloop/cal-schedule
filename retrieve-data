@@ -1,0 +1,35 @@
+#!/bin/bash
+SCHEDULE_URL=http://schedule.berkeley.edu/
+TABULA_PATH=~/.bin/tabula.jar
+DATA_PATH=$(mktemp)
+RAW_UNDERGRAD_PATH=$(mktemp)
+RAW_GRAD_PATH=$(mktemp)
+UNDERGRAD_PATH='data/undergrad_schedule.csv'
+GRAD_PATH='data/grad_schedule.csv'
+DRIVE_TOKEN='drive'
+UNDERGRAD_TOKEN='Undergraduate Schedule'
+GRAD_TOKEN='Graduate Schedule'
+DRIVE_DOWNLOAD_PREFIX='https://drive.google.com/uc?export=download&id='
+
+obtain_id () {
+    token=$1
+    pre_id=$(grep $token $DATA_PATH | grep -Po 'href="https://drive.google.com/open\?id=.*?"' | cut -d'=' -f3-)
+    echo ${pre_id::-1}
+}
+
+parse_pdf() {
+    input_path=$1
+    output_path=$2
+    java -jar $TABULA_PATH $input_path -f CSV -g -r -o $output_path --pages all
+}
+
+curl $SCHEDULE_URL | grep $DRIVE_TOKEN > $DATA_PATH
+
+undergrad_id=$(obtain_id $UNDERGRAD_TOKEN)
+grad_id=$(obtain_id $GRAD_TOKEN)
+
+curl -L $DRIVE_DOWNLOAD_PREFIX$undergrad_id > $RAW_UNDERGRAD_PATH 
+curl -L $DRIVE_DOWNLOAD_PREFIX$grad_id > $RAW_GRAD_PATH 
+
+parse_pdf $RAW_UNDERGRAD_PATH $UNDERGRAD_PATH
+parse_pdf $RAW_GRAD_PATH $GRAD_PATH
