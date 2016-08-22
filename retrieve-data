@@ -1,6 +1,6 @@
 #!/bin/bash
 SCHEDULE_URL=http://schedule.berkeley.edu/
-TABULA_PATH=~/.bin/tabula.jar
+TABULA_PATH=~/share/tabula.jar
 DATA_PATH=$(mktemp)
 RAW_UNDERGRAD_PATH=$(mktemp)
 RAW_GRAD_PATH=$(mktemp)
@@ -33,3 +33,6 @@ curl -L $DRIVE_DOWNLOAD_PREFIX$grad_id > $RAW_GRAD_PATH
 
 parse_pdf $RAW_UNDERGRAD_PATH $UNDERGRAD_PATH
 parse_pdf $RAW_GRAD_PATH $GRAD_PATH
+
+python2 preprocess_schedule_csv.py
+python2 preprocess_schedule.py
