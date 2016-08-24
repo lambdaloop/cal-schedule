@@ -64,12 +64,12 @@ export function fetchEnrollment(course) {
                 let section_types = sections[key]
                 for(let section_type in section_types) {
                     for(let section of section_types[section_type]) {
-                        if(section.enrollment) {
+                        console.log(section)
+                        if(section.enrollment && section.enrollment != "none") {
                             continue
                         }
 
                         if(sectionIDs[section.Section]) {
-
                             $.get(SERVER_URL + '/section_enrollment?section_id=' + sectionIDs[section.Section])
                                 .done(data => {
                                     if(data.status == 'success') {
