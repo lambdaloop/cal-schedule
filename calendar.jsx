@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import { exportCalendar } from './export_calendar.jsx'
 
 function timeToMinutes(time) {
     const s = time.split(':');
@@ -216,7 +217,7 @@ class Calendar extends Component {
 
 class CalendarPicker extends Component {
     render() {
-        const { numCalendars, selected } = this.props
+        const { numCalendars, selected, calendar } = this.props
 
         return (
             <div className="CalendarPicker">
@@ -234,6 +235,11 @@ class CalendarPicker extends Component {
                           type: 'NEXT_CALENDAR_INDEX'
                       })
                   }}> Next </span>
+              </div>
+              <div className="ExportButton">
+                <span className="btn" onClick={() => {
+                      exportCalendar(calendar)
+                  }}>Export to Calendar</span>
               </div>
             </div>
         )
@@ -265,7 +271,9 @@ export class Calendars extends Component {
 
         return (
             <div className="Calendars">
-              <CalendarPicker numCalendars={calendars.length} selected={index} />
+              <CalendarPicker numCalendars={calendars.length}
+                              selected={index}
+                              calendar={calendar} />
               <Calendar courses={calendar} />
             </div>
         )

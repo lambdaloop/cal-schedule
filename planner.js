@@ -1,4 +1,4 @@
-import Queue from './Queue.js';
+import Queue from './lib/Queue.js';
 
 /*
  This should plan the schedules, given some candidate classes.
