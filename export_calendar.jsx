@@ -38,7 +38,12 @@ export function exportCalendar(calendar) {
             let byday = section['Meeting Days'].split('').map(d => DAY_MAP[d])
             const startDate = getStartDate(section['Meeting Days'])
             const startTime = startDate + ' ' + section['Start Time']
-            const endTime = startDate + ' ' + section['End Time']
+
+            // account for the :59 and :29 endings, which are not as clean
+            let endTime = startDate + ' ' + section['End Time']
+            endTime = new Date(endTime)
+            endTime.setMinutes(endTime.getMinutes() + 1)
+
 
             cal.addEvent(section.Key + " " + section["Course Component"], // title
                          "", // details
