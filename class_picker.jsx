@@ -7,6 +7,7 @@ require('react-select/dist/react-select.css')
 require('react-virtualized-select/styles.css')
 
 import { storeCookieData } from './session_manager.js'
+import { FeedbackButton } from './feedback.jsx'
 
 class ClassList extends Component {
     constructor(props) {
@@ -128,6 +129,7 @@ export class ClassPicker extends Component {
                       onChange={this.onChange}
                       className="ClassSelect"
                       />
+              <FeedbackButton/>
               <ClassList items={state.courses.picked}  />
               <div className="btn" id="generate">Generate schedules!</div>
             </div>

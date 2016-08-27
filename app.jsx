@@ -82,6 +82,7 @@ export function getPickedItems() {
     })
 }
 
+
 class App extends Component {
     constructor(props) {
         super(props)

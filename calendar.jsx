@@ -237,9 +237,9 @@ class CalendarPicker extends Component {
                   }}> Next </span>
               </div>
               <div className="ExportButton">
-                <span className="btn" onClick={() => {
+                <span className="btn" id="exportCalendar" onClick={() => {
                       exportCalendar(calendar)
-                  }}>Export to Calendar</span>
+                  }}>Export</span>
               </div>
             </div>
         )
