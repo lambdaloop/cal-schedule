@@ -14,9 +14,9 @@ http://lambdaloop.github.io/cal-schedule
 ## Technicals
 
 
-### Scraping
+### Scraping Schedules
 
-For scraping the pdfs, I used the excellent [Tabula](http://tabula.technology/).
+For scraping the schedule pdfs, I use the excellent [Tabula](http://tabula.technology/).
 Thanks to [Raj Kesavan](https://github.com/raj-kesavan/), we now have a simple script to update the schedule!
 
 Download Tabula and update the TABULA_PATH inside the `retrieve-data` file to point to the downloaded jar.
