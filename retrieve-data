@@ -34,5 +34,6 @@ curl -L $DRIVE_DOWNLOAD_PREFIX$grad_id > $RAW_GRAD_PATH
 parse_pdf $RAW_UNDERGRAD_PATH $UNDERGRAD_PATH
 parse_pdf $RAW_GRAD_PATH $GRAD_PATH
 
+python2 get_berkeley_time_ids.py
 python2 preprocess_schedule_csv.py
 python2 preprocess_schedule.py

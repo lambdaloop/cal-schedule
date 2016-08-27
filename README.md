@@ -13,7 +13,23 @@ http://lambdaloop.github.io/cal-schedule
 
 ## Technicals
 
-### Overview & Setup
+
+### Scraping
+
+For scraping the pdfs, I used the excellent [Tabula](http://tabula.technology/).
+Thanks to [Raj Kesavan](https://github.com/raj-kesavan/), we now have a simple script to update the schedule!
+
+Download Tabula and update the TABULA_PATH inside the `retrieve-data` file to point to the downloaded jar.
+Then, you can simply run:
+
+``` shell
+bash retrieve-data
+```
+
+This will fetch the latest schedule data from http://schedule.berkeley.edu/ ,
+and update the berkeleytime.com schedule ids for enrollment data.
+
+### Frontend Overview
 I tried to use some new tech with this, so this is built with:
 
 - [React](https://facebook.github.io/react/)
@@ -23,11 +39,6 @@ I tried to use some new tech with this, so this is built with:
 
 Moving to Redux and ES6 definitely made the architecture and code cleaner.
 
-For scraping the pdfs, I used the excellent [Tabula](http://tabula.technology/). After downloading the schedules from http://schedule.berkeley.edu/ , I ran the following to get CSVs that I could then process with Python:
-``` shell
-java -jar tabula-0.9.0-SNAPSHOT-jar-with-dependencies.jar "Fall 2016 Grad Schedule of Classes.pdf"  -f CSV  -g -r -o grad_schedule.csv --pages all
-java -jar tabula-0.9.0-SNAPSHOT-jar-with-dependencies.jar "Fall 2016 Undergrad Schedule of Classes.pdf"  -f CSV  -g -r -o undergrad_schedule.csv --pages all
-```
 
 ### Development
 To develop, you need to get the latest npm packages, and then recompile the app with webpack:
