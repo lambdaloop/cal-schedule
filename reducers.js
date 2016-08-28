@@ -3,7 +3,7 @@ import objectAssignDeep from 'object-assign-deep'
 import objectAssign from 'object-assign-deep'
 
 
-function selectSections(course, section_id) {
+function selectSections(course, section_id, set) {
     let out = objectAssignDeep({}, course)
     let sections = out.data.sections
     for(const key in sections) {
@@ -11,7 +11,11 @@ function selectSections(course, section_id) {
         for(let section_type in section_types) {
             for(let section of section_types[section_type]) {
                 if(section_id === undefined || section['Class Number'] == section_id ) {
-                    section.selected = !section.selected
+                    if(set === undefined) {
+                        section.selected = !section.selected
+                    } else {
+                        section.selected = set
+                    }
                 }
             }
         }
@@ -36,10 +40,11 @@ function setEnrollmentSection(course, section_id, enrollment) {
 }
 
 function course(state = {}, action) {
+    console.log(action)
     switch(action.type) {
     case 'ADD_COURSE':
         return {
-            course: selectSections(action.course),
+            course: selectSections(action.course, undefined, true),
             id: action.id,
             selected: (action.selected === undefined ? true : action.selected)
         }

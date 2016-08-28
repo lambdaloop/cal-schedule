@@ -8,14 +8,18 @@ export function loadCookieData() {
     courses = JSON.parse(courses)
     for(const c of courses) {
         console.log(c)
-        if(c.custom) {
-            continue // stub for now
-        }
+
         
-        const course = {
-            data: window.data[c.id],
+        let course = {
             label: c.id,
             value: c.id
+        }
+
+        if(c.custom) {
+            course.data = c.data
+            course.custom = true
+        } else {
+            course.data = window.data[c.id]
         }
 
         window.store.dispatch({
@@ -61,12 +65,18 @@ export function storeCookieData() {
     const state = window.store.getState()
     const courses = state.courses.picked
 
-    const out = courses.map(course => { return {
-        id: course.id,
-        custom: course.course.custom,
-        selected: course.selected,
-        unselectedSections: getUnselectedSections(course.course)
-    } } )
+    const out = courses.map(course => {
+        let c = {
+            id: course.id,
+            selected: course.selected,
+            unselectedSections: getUnselectedSections(course.course)
+        }
+        if(course.course.custom) {
+            c.data = course.course.data
+            c.custom = true
+        }
+        return c
+    } )
 
     const str = JSON.stringify(out)
 

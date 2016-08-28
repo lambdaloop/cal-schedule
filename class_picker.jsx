@@ -91,7 +91,8 @@ function customCourse(title, meetingDays, startTime, endTime) {
         "Start Time": startTime,
         "End Time": endTime,
         Facility: 'Some place',
-        enrollment: 'none'
+        enrollment: 'none',
+        'Class Number': 0
     }
     
     return {
