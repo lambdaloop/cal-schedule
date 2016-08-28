@@ -136,7 +136,9 @@ export class ClassDetails extends Component {
 
         return (
             <div className="ClassDetails">
-              <div className="ClassTitle">{course_id} &mdash; {info['Course Title']}</div>
+              <div className="ClassTitle">
+                {!info.custom ? [course_id, <span key='mdash'> &mdash; </span>]:''}{info['Course Title']}
+              </div>
               <ClassSection sections={course['sections']} info={course['info']} />
             </div>
         )

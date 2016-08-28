@@ -7,6 +7,11 @@ export function loadCookieData() {
     }
     courses = JSON.parse(courses)
     for(const c of courses) {
+        console.log(c)
+        if(c.custom) {
+            continue // stub for now
+        }
+        
         const course = {
             data: window.data[c.id],
             label: c.id,
@@ -58,6 +63,7 @@ export function storeCookieData() {
 
     const out = courses.map(course => { return {
         id: course.id,
+        custom: course.course.custom,
         selected: course.selected,
         unselectedSections: getUnselectedSections(course.course)
     } } )

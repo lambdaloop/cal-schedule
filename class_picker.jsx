@@ -1,5 +1,6 @@
 import React, { Component } from "react"
 import { Link } from "react-router"
+import shortid from "shortid"
 
 import Select from 'react-virtualized-select'
 require('react-virtualized/styles.css')
@@ -49,13 +50,19 @@ class ClassList extends Component {
 
             const url = `/class/${value.replace(' ', '-')}`
 
+            let titleSpan = (<span>{title} &mdash; {name} </span>)
+            if(d.custom) {
+                titleSpan = (<span>{name} </span>)
+            }
+                  
             return (
                 <div key={value}>
                   <input className="CheckClass"
                          type="checkbox" value={value}
                          checked={checked} onChange={this.checkItem}/>
                   <span className="ClassTitle">
-                    <span>{title} &mdash; {name}</span> <Link to={url}>(sections)</Link>
+                    {titleSpan}
+                    <Link to={url}>(sections)</Link>
                     <span className="ClassX" onClick={this.removeItem} name={value}> x </span>
                   </span>
                 </div>
@@ -69,6 +76,53 @@ class ClassList extends Component {
                 {items}
               </div>
             </div>
+        )
+    }
+}
+
+function customCourse(title, meetingDays, startTime, endTime) {
+    let id = 'CUSTOM ' + shortid.generate();
+
+    const section = {
+        custom: true,
+        "Course Title": title,
+        Key: id,
+        "Meeting Days": meetingDays,
+        "Start Time": startTime,
+        "End Time": endTime,
+        Facility: 'Some place',
+        enrollment: 'none'
+    }
+    
+    return {
+        label: id,
+        value: id,
+        custom: true,
+        data: {
+            info: section,
+            sections: {
+                1: {
+                    LEC: [section]
+                }
+            }
+        }
+    }
+}
+
+class CustomEventButton extends Component {
+    render() {
+        return (
+            <span className='btn' id='customEvent' onClick={() => {
+                  let course = customCourse('Custom Event', 'MTWRF', '15:00', '15:59')
+                  window.store.dispatch({
+                      type: 'ADD_COURSE',
+                      course: course,
+                      id: course.value
+                  })
+                  storeCookieData()
+              }}>
+              Custom Event
+            </span>
         )
     }
 }
@@ -129,7 +183,10 @@ export class ClassPicker extends Component {
                       onChange={this.onChange}
                       className="ClassSelect"
                       />
-              <FeedbackButton/>
+              <div className="TopButtons">
+                <CustomEventButton/>
+                <FeedbackButton/>
+              </div>
               <ClassList items={state.courses.picked}  />
               <div className="btn" id="generate">Generate schedules!</div>
             </div>

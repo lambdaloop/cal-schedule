@@ -90,16 +90,6 @@ function courses(state = {picked: [], ids: {}}, action) {
                 ids
             }
         }
-    case 'TOGGLE_COURSE':
-        return {
-            picked: state.picked.map( c => course(c, action) ),
-            ids: state.ids
-        }
-    case 'ENROLLMENT_SECTION':
-        return {
-            picked: state.picked.map( c => course(c, action) ),
-            ids: state.ids
-        }
     case 'REMOVE_COURSE':
         let ids = objectAssignDeep({}, state.ids)
         delete ids[action.id]
@@ -109,6 +99,8 @@ function courses(state = {picked: [], ids: {}}, action) {
             ids: ids
         }
 
+    case 'TOGGLE_COURSE':
+    case 'ENROLLMENT_SECTION':
     case 'TOGGLE_SECTION':
         return {
             picked: state.picked.map( c => course(c, action) ),

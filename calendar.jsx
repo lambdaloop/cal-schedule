@@ -31,8 +31,13 @@ class Section extends Component {
 
         const courseTitle = `${section['Subject']} ${section['Catalog Number']}`
         const sectionTitle = `${section["Course Component"]} ${section["Section"]}`
+        let title = `${courseTitle} ${sectionTitle}`
+        if(section.custom) {
+            title = section['Course Title']
+        }
         const facilityTitle = section['Facility']
-
+        
+        
         return (
             <div className="Section"
                  style={{
@@ -42,7 +47,7 @@ class Section extends Component {
                      height: this.props.height + "%",
                      position: "absolute"
                  }}>
-              <span className="CourseTitle"> {courseTitle} {sectionTitle}</span>
+              <span className="CourseTitle">{title}</span>
               <div className="FacilityTitle">
                 {facilityTitle}
               </div>
