@@ -3,15 +3,20 @@ import objectAssignDeep from 'object-assign-deep'
 import objectAssign from 'object-assign-deep'
 
 
-function selectSections(course, section_id) {
+function selectSections(course, section_id, select) {
     let out = objectAssignDeep({}, course)
     let sections = out.data.sections
     for(const key in sections) {
         let section_types = sections[key]
         for(let section_type in section_types) {
             for(let section of section_types[section_type]) {
-                if(section_id === undefined || section['Class Number'] == section_id ) {
-                    section.selected = !section.selected
+                if(section_id === undefined || section_id === null || section['Class Number'] == section_id ) {
+                    if (select === undefined) {
+                        section.selected = !section.selected
+                    }
+                    else {
+                        section.selected = select
+                    }
                 }
             }
         }
@@ -57,6 +62,16 @@ function course(state = {}, action) {
         } else {
             return {
                 course: selectSections(state.course, action.section_id),
+                id: state.id,
+                selected: state.selected
+            }
+        }
+    case 'TOGGLE_ALL_SECTIONS':
+        if (state.id !== action.id) {
+            return state;
+        } else {
+            return {
+                course: selectSections(state.course, null, action.select),
                 id: state.id,
                 selected: state.selected
             }
@@ -110,6 +125,7 @@ function courses(state = {picked: [], ids: {}}, action) {
         }
 
     case 'TOGGLE_SECTION':
+    case 'TOGGLE_ALL_SECTIONS':
         return {
             picked: state.picked.map( c => course(c, action) ),
             ids: state.ids

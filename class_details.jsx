@@ -85,22 +85,64 @@ export class ClassSection extends Component {
         }
 
         return (
-            <table className="ClassSection">
-              <tbody>
-                <tr className="HeaderRow">
-                  <th></th>
-                  <th>CCN</th>
-                  <th>Section</th>
-                  <th>Days</th>
-                  <th className="TimeColumn">Time</th>
-                  <th>Instructor</th>
-                  <th>Enrolled</th>
-                  <th>Waitlist</th>
-                </tr>
-                {rows}
-              </tbody>
-            </table>
+            <div>
+                <BulkSectionToggle courseId={this.props.info['Key']} />
+                <table className="ClassSection">
+                  <tbody>
+                    <tr className="HeaderRow">
+                      <th>CCN</th>
+                      <th>Section</th>
+                      <th>Days</th>
+                      <th className="TimeColumn">Time</th>
+                      <th>Instructor</th>
+                      <th>Enrolled</th>
+                      <th>Waitlist</th>
+                    </tr>
+                    {rows}
+                  </tbody>
+                </table>
+            </div>
         )
+    }
+}
+
+class BulkSectionToggle extends Component {
+    constructor(props) {
+        super(props)
+        this.handleDeselectClick = this.handleDeselectClick.bind(this)
+        this.handleSelectClick = this.handleSelectClick.bind(this)
+    }
+
+    render() {
+        return (
+            <div style={{textAlign: "left"}}>
+                Select:&nbsp;
+                <a href="javascript:;" onClick={this.handleSelectClick}>
+                     All
+                </a>
+                &nbsp;
+                <a href="javascript:;" onClick={this.handleDeselectClick}>
+                    None
+                </a>
+            </div>
+        )
+    }
+
+    dispatchBulkToggle(select) {
+        window.store.dispatch({
+            type: 'TOGGLE_ALL_SECTIONS',
+            id: this.props.courseId,
+            select: select
+        })
+        storeCookieData()
+    }
+
+    handleSelectClick(e) {
+        this.dispatchBulkToggle(true)
+    }
+
+    handleDeselectClick(e) {
+        this.dispatchBulkToggle(false)
     }
 }
 
