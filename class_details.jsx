@@ -90,6 +90,7 @@ export class ClassSection extends Component {
                 <table className="ClassSection">
                   <tbody>
                     <tr className="HeaderRow">
+                      <th></th>
                       <th>CCN</th>
                       <th>Section</th>
                       <th>Days</th>
