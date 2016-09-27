@@ -68,3 +68,7 @@ I welcome pull requests! If you make one, I only ask you to try to use the lates
 Thanks to Ronald Kwan who built a schedule searcher from the same PDFs some time ago:
 http://rkwan.gitlab.io/cal-schedule/
 This inspired me to build my own website as well (with the same name because it was good).
+
+Thanks to [Raj Kesavan](https://github.com/raj-kesavan/) for contributing a script to update the schedule easily.
+
+Thanks to [Jordon Wing](https://github.com/jordonwii) for adding the "select all/none" feature.
